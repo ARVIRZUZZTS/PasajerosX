@@ -517,27 +517,7 @@ window.onload = () => {
 function setFecha() {
     document.getElementById("fecha").textContent = "FECHA SELECCIONADA: " + params.get('fecha');
 }
-function del() {
-    const confirmacion = confirm("¿Estás seguro de que deseas eliminar este reporte?");
-    if (!confirmacion) return;
 
-    const params = new URLSearchParams(window.location.search);
-    const codR = params.get('codR');
-
-    fetch(`php/editar/eliminarReporte.php?codR=${encodeURIComponent(codR)}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location = "menu.html"; 
-            } else {
-                alert("Error al eliminar: " + (data.error || "Error desconocido"));
-            }
-        })
-        .catch(error => {
-            console.error("Error al eliminar:", error);
-            alert("Ocurrió un error al intentar eliminar el reporte.");
-        });
-}
 document.addEventListener('keydown', function(e) {
      if (e.key === 'Enter') {
         e.preventDefault();

@@ -89,17 +89,27 @@ try {
     error_log("Total pares conLic: " . count($lists['conLic']));
     error_log("Ejemplo conLic: " . ($lists['conLic'][0] ?? 'Vacío'));
     
-    $lists['dt'] = ['COCHABAMBA', 'LA PAZ'];
+    $queryDestino = "SELECT nombreZona FROM destino ORDER BY nombreZona";
+    $resultDestino = mysqli_query($conexion, $queryDestino);
+    $lists['dt'] = [];
+    if ($resultDestino) {
+        while ($row = mysqli_fetch_assoc($resultDestino)) {
+            $lists['dt'][] = $row['nombreZona'];
+        }
+    }
 
-    // 3. Obtener planillas completas desde flota
-    $queryPlanillas = "SELECT p.nombre, f.placa, f.conductor1 AS conductor, f.licencia1 AS licencia
+    // 3. Obtener planillas completas desde flota (con DISTINCT para evitar duplicados cuando una misma planilla se asigna a varias flotas)
+    $queryPlanillas = "SELECT DISTINCT p.nombre, f.placa, f.conductor1 AS conductor, f.licencia1 AS licencia
                        FROM (SELECT DISTINCT nombre FROM planilla) p
                        LEFT JOIN flota f ON f.nombre_planilla = p.nombre
                        ORDER BY p.nombre";
     $resultPlanillas = mysqli_query($conexion, $queryPlanillas);
     $lists['planillasCompletas'] = [];
+    $nombresVistos = [];
     if ($resultPlanillas) {
         while ($row = mysqli_fetch_assoc($resultPlanillas)) {
+            if (in_array($row['nombre'], $nombresVistos)) continue;
+            $nombresVistos[] = $row['nombre'];
             $lists['planillasCompletas'][] = [
                 'nombre' => $row['nombre'],
                 'placa' => $row['placa'] ?? '',

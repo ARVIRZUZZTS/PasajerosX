@@ -190,9 +190,12 @@ async function cargarPlanillas() {
         const response = await fetch('php/common/getList.php');
         const data = await response.json();
         const select = document.getElementById('nombre_planilla');
+        const nombresVistos = new Set();
 
         if (data.planillasCompletas) {
             data.planillasCompletas.forEach(p => {
+                if (nombresVistos.has(p.nombre)) return;
+                nombresVistos.add(p.nombre);
                 const option = document.createElement('option');
                 option.value = p.nombre;
                 option.textContent = p.nombre;

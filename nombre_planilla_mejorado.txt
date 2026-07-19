@@ -1,0 +1,17 @@
+nombres de planilla que no figuran dejar nomas
+LEITO 41 # YLE
+LEITO 43 # 
+LEITO 40 # EXH 
+LEITO - SEMI CAMA # 
+SEMI CAMA - LEITO #
+nombre de planillas que hay que cambiar a el nombre de planilla
+LEITO 41 # BNE DKT KGD TFU YLE YNF
+LEITO 43 # EAY RXU UKF UTA
+LEITO 40 # EXH KUX PCT 
+LEITO - SEMI CAMA # FIU UKE YXG
+SEMI CAMA - LEITO # GID
+
+esto es para quitar porque por alguna razon aun que actualice en la flota, en el resumen sigue mostrando una planilla antigua
+y me da miedo eliminar por la base de datos anterior
+entonces seria hacer un script  para modificar elresponsable de mostrar unas planillas antiguas y como ahi dice 
+ciertas placas son cierto tipo de bus
