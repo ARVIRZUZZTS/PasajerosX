@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>CREAR VIAJE</title>
+    <link rel="stylesheet" href="css/nomina.css">
+</head>
+<body>
+    <header>
+        <img src="img/logoX.png" alt="Logo">
+        <div>
+            <h1>CREAR VIAJE</h1>
+            <h3 id="fecha"></h3>
+            <h3 id="hora"></h3>
+        </div>        
+    </header>
+
+    <main>
+        <div id="botones">
+            <div class="bot">
+            <button id="save" onclick="save()">
+                <span class="emoji">💾</span>
+                <span>GUARDAR</span>
+            </button>
+            </div>
+            <div class="bot">
+            <button id="back" onclick="back()">
+                <span class="emoji">⬅️</span>
+                <span>ATRAS</span>
+            </button>
+            </div>
+        </div>
+
+        <div id="lista">
+            <div id="top">
+                <h1>DATOS DEL VIAJE</h1>
+                <div id="entradas">
+                    <div>
+                        <div>
+                            <h3 class="izq">CONDUCTOR 1: </h3>
+                            <input type="text" id="c1" maxlength="150" placeholder="CONDUCTOR 1" name="c1" list="c1-list" autocomplete="off">
+                            <datalist id="c1-list"></datalist>
+                        </div>
+                        <div>
+                            <h3>LICENCIA 1: </h3>
+                            <input class="der" type="text" id="l1" maxlength="20" placeholder="LICENCIA 1" name="l1" oninput="this.value = this.value.replace(/[^0-9]/g, '')" list="l1-list" autocomplete="off">
+                            <datalist id="l1-list"></datalist>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <h3 class="izq">CONDUCTOR 2: </h3>
+                            <input type="text" id="c2" maxlength="150" placeholder="CONDUCTOR 2" name="c2" list="c2-list" autocomplete="off">
+                            <datalist id="c2-list"></datalist>
+                        </div>
+                        <div>
+                            <h3>LICENCIA 2: </h3>
+                            <input class="der" type="text" id="l2" maxlength="20" placeholder="LICENCIA 2" name="l2" oninput="this.value = this.value.replace(/[^0-9]/g, '')" list="l2-list" autocomplete="off">
+                            <datalist id="l2-list"></datalist>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <h3 class="izq">AYUDANTE: </h3>
+                            <input type="text" id="ay" maxlength="150" placeholder="AYUDANTE" name="ay" list="ay-list" autocomplete="off">
+                            <datalist id="ay-list"></datalist>
+                        </div>
+                        <div>
+                            <h3>DESTINO: </h3>
+                            <input class="der" type="text" id="dt" maxlength="20" placeholder="DESTINO" name="dt" list="dt-list" autocomplete="off">
+                            <datalist id="dt-list">
+                                <option value="Cochabamba">
+                                <option value="La Paz">
+                            </datalist>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <h3 class="izq">PLACA: </h3>
+                            <input type="text" id="pl" maxlength="20" placeholder="PLACA" name="pl" list="pl-list" autocomplete="off">
+                            <datalist id="pl-list"></datalist>
+                        </div>
+                        <div>
+                            <h3>PLANILLA:</h3>
+                            <input class="der" type="text" id="ma" maxlength="150" placeholder="PLANILLA" name="ma" list="ma-list" autocomplete="off">
+                            <datalist id="ma-list"></datalist>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <h3 class="izq">FECHA: </h3>
+                            <input type="text" id="fe" maxlength="10" placeholder="FECHA" name="fe" readonly>
+                        </div>
+                        <div>
+                            <h3>HORA: </h3>
+                            <input class="der" type="text" id="hr" maxlength="10" placeholder="HORA" name="hr" list="hr-list" autocomplete="off">
+                            <datalist id="hr-list"></datalist>
+                            <h3>CARRIL: </h3>
+                            <input class="der" type="text" id="ca" maxlength="10" placeholder="30" name="hr" oninput="this.value = this.value.replace(/[^0-9]/g, '')" list="ca-list" autocomplete="off">
+                            <datalist id="ca-list"></datalist>                            
+                        </div>
+                    </div>
+                    <p id="carr5">Por defecto se coloca carril 30 a menos que lo cambie.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="js/nomina.js"></script>
+</body>
+</html>

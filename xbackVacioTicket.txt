@@ -1,0 +1,42 @@
+ const ticketHTML = `
+        <div id="pasajeroPrintBody">
+            <img id="imgPr2" src="img/logXXF.png" alt="Logo">
+            <div id="adver">
+                <div id="fact">
+                    <h4 class="marNon strCent">EXIJA SU</h4>
+                    <h1 class="marNon strCent">FACTURA</h1>
+                </div>
+                <div>
+                    <h3>ESTE BOLETO CONSTITUYE RESERVA DE PASAJE</h3>
+                </div>
+            </div>
+            <div>
+                <h3 id="dtP" class="cien big">De SC a: </h3>
+            </div>
+            <div>
+                <h3 id="nmP" class="cien big">NOMBRE: </h3>
+            </div>
+            <div>
+                <h3 class="ciPr big">CI/CEL: </h3>
+            </div>
+            <div>
+                <h3 class="pl big">PLACA: </h3>
+                <h3 class="ca big">CARRIL: 30</h3>
+            </div>
+            <div>
+                <h3 id="fechaPrint" class="big">FECHA: ${fecha}</h3>
+                <h3 id="hrP" class="big">HORA: </h3>
+            </div>             
+            <div>
+                <h3 id="prP" class="big">PRECIO: </h3>
+                <h3 id="asP" class="big">ASIENTO: </h3>                
+            </div>
+            <div>
+                <h3 id="emP" class="big">EMITIDO POR: </h3>
+            </div>
+            <h1 id="bv">¡¡BUEN VIAJE!!</h1>
+            <p id="msj">AVISE 3 HRS ANTES DE ABORDAR EL BUS EN CASO DE DEVOLUCION<br>
+                No valido para credito fiscal.
+            </p>
+        </div>
+        `;

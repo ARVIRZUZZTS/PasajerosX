@@ -1,0 +1,42 @@
+document.getElementById("printP").innerHTML = `
+<div id="pasajeroPrintBody">
+    <img id="imgPr2" src="img/logXXF.png" alt="Logo">
+    <div id="adver">
+        <div id="fact">
+            <h4 class="marNon strCent">EXIJA SU</h4>
+            <h1 class="marNon strCent">FACTURA</h1>
+        </div>
+        <div>
+            <h3>ESTE BOLETO CONSTITUYE RESERVA DE PASAJE</h3>
+        </div>
+    </div>
+    <div>
+        <h3 id="dtP" class="cien">De SC a: ${datosPasajero.destino}</h3>
+    </div>
+    <div>
+        <h3 id="nmP" class="cien">NOMBRE: ${datosPasajero.nombre}</h3>
+    </div>
+    <div>
+        <h3 class="ciPr">CI/CEL: ${datosPasajero.ci}</h3>
+    </div>
+    <div>
+        <h3 class="pl">PLACA: ${placa}</h3>
+        <h3 class="ca">CARRIL: ${carril}</h3>
+    </div>
+    <div>
+        <h3 id="fechaPrint">FECHA: ${datosPasajero.fecha}</h3>
+        <h3 id="hrP">HORA: ${option === 'full' || option === 'time' ? horaReporte : ''}</h3>
+    </div> 
+    <div>
+        <h3 id="prP">PRECIO: ${option === 'full' || option === 'price' ? datosPasajero.precio : ''}</h3>
+        <h3 id="asP">ASIENTO: ${datosPasajero.asiento}</h3>
+    </div>
+    <div>
+        <h3 id="emP" class="big">EMITIDO POR: </h3>
+    </div>
+    <h1 id="bv">¡¡BUEN VIAJE!!</h1>
+    <p id="msj">AVISE 3 HRS ANTES DE ABORDAR EL BUS EN CASO DE DEVOLUCION<br>
+        No valido para credito fiscal.
+    </p>
+    </div>
+`;
