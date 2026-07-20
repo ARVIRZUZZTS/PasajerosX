@@ -33,6 +33,9 @@ function planilla() {
 function flota() {
     window.location = "flota.html";
 }
+function chofer() {
+    window.location = "chofer.html";
+}
 document.addEventListener('DOMContentLoaded', () => {
     
     flatpickr("#calendario", {

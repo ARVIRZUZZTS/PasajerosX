@@ -55,7 +55,7 @@
                             </div>
                             <div class="field">
                                 <label>PLANILLA</label>
-                                <input type="text" id="ma">
+                                <input type="text" id="placa">
                             </div>
                         </div>
                     </div>
@@ -64,8 +64,18 @@
                         <h3>👤 CONDUCTORES</h3>
                         <div class="field-row">
                             <div class="field">
+                                <label>PROPIETARIO</label>
+                                <input type="text" id="propietario">
+                            </div>
+                            <div class="field">
+                                <label>MARCA</label>
+                                <input type="text" id="marca">
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field">
                                 <label>CONDUCTOR 1</label>
-                                <input type="text" id="c1">
+                                <input type="text" id="c1" list="chofer-list" autocomplete="off">
                             </div>
                             <div class="field">
                                 <label>LICENCIA 1</label>
@@ -75,7 +85,7 @@
                         <div class="field-row">
                             <div class="field">
                                 <label>CONDUCTOR 2</label>
-                                <input type="text" id="c2">
+                                <input type="text" id="c2" list="chofer-list" autocomplete="off">
                             </div>
                             <div class="field">
                                 <label>LICENCIA 2</label>
@@ -96,6 +106,7 @@
                             <div class="field">
                                 <label>DESTINO</label>
                                 <input type="text" id="dt" list="dt-list" placeholder="DESTINO" autocomplete="off">
+                                <datalist id="chofer-list"></datalist>
                                 <datalist id="dt-list"></datalist>
                             </div>
                             <div class="field">

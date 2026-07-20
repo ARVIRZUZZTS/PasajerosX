@@ -144,12 +144,12 @@ async function verificarDisponibilidadAsiento(codP, codR) {
         const pasajeros = await pasajerosRes.json();
         if (!Array.isArray(pasajeros)) throw new Error("Formato de datos inválido para pasajeros");
 
-        // 3. Obtener datos del bus (marca)
+        // 3. Obtener datos del bus (placa)
         const reporteRes = await fetch(`php/common/getReporte.php?codR=${codR}`);
         if (!reporteRes.ok) throw new Error(`Error HTTP: ${reporteRes.status}`);
         
         const reporte = await reporteRes.json();
-        if (!reporte || !reporte.marca) throw new Error("No se encontró el reporte o falta la marca del bus");
+        if (!reporte || !reporte.placa) throw new Error("No se encontró el reporte o falta la placa del bus");
 
         // 4. Verificar disponibilidad del asiento
         const asientoOcupado = pasajeros.some(p => p.asiento == asientoActual && p.codP != codP);
@@ -161,7 +161,7 @@ async function verificarDisponibilidadAsiento(codP, codR) {
 
         // 5. Buscar asiento alternativo
         const asientosOcupados = pasajeros.map(p => parseInt(p.asiento)).filter(a => !isNaN(a));
-        const asientoLibre = await encontrarAsientoLibre(reporte.marca, asientoActual, asientosOcupados);
+        const asientoLibre = await encontrarAsientoLibre(reporte.placa, asientoActual, asientosOcupados);
         
         if (asientoLibre === null) {
             alert("El bus está lleno, NO hay asientos disponibles");
@@ -229,10 +229,10 @@ async function actualizarAsientoYReporte(codP, codR, nuevoAsiento) {
         // Podrías implementar esta lógica si es importante para tu aplicación
     }
 }
-async function encontrarAsientoLibre(marca, asientoOriginal, asientosOcupados) {
+async function encontrarAsientoLibre(placa, asientoOriginal, asientosOcupados) {
     try {
         // Obtener todos los asientos del bus
-        const busRes = await fetch(`php/common/getBus.php?nombre=${encodeURIComponent(marca)}`);
+        const busRes = await fetch(`php/common/getBus.php?placa=${encodeURIComponent(placa)}`);
         const busData = await busRes.json();
         
         // Filtrar solo asientos y obtener números

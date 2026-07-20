@@ -10,7 +10,7 @@ $lists = [
     'conLic' => [],  // Este es el array crítico para el autocompletado
     'ay' => [],
     'pl' => [],
-    'ma' => [],
+
     'dt' => [],
     'hr' => [],
     'ca' => []
@@ -57,18 +57,6 @@ try {
                 if ($row[$field] !== null && $row[$field] !== '') {
                     $lists[$field[0] . $field[1]][] = trim($row[$field]); // 'ayudante' -> 'ay'
                 }
-            }
-        }
-    }
-    
-    // 2. Obtener MARCAS DE PLANILLAS
-    $queryMarcas = "SELECT DISTINCT nombre AS marca FROM planilla ORDER BY nombre";
-    $resultMarcas = mysqli_query($conexion, $queryMarcas);
-    
-    if ($resultMarcas) {
-        while ($row = mysqli_fetch_assoc($resultMarcas)) {
-            if ($row['marca'] !== null && $row['marca'] !== '') {
-                $lists['ma'][] = trim($row['marca']);
             }
         }
     }

@@ -2,7 +2,7 @@
 const codR = params.get('codR');
 const c1 = decodeURIComponent(params.get('c1') || 'n');
 const pl = decodeURIComponent(params.get('pl') || 'n');
-const ma = decodeURIComponent(params.get('ma') || 'n');
+const placa = decodeURIComponent(params.get('placa') || 'n');
 const dt = decodeURIComponent(params.get('dt') || 'n');
 const as = decodeURIComponent(params.get('as') || 'n');
 const hh = decodeURIComponent(params.get('hh') || 'n');
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setFecha();
     setTitle();
     setDest();
-    cargarDisenoBus(ma);
+    cargarDisenoBus(placa);
 
     if (as !== "n") {
         document.getElementById('asH').readOnly = true;
@@ -143,7 +143,7 @@ function setTitle() {
                 <h3>Conductor: ${c1}</h3>
                 <div>
                     <h3>Placa: ${pl}</h3>
-                    <h3>Planilla: ${ma}</h3>
+                    <h3>Placa: ${placa}</h3>
                 </div>
             </div>
         `;
@@ -271,7 +271,7 @@ function actualizarVistaBus() {
     });
 }
 
-async function cargarDisenoBus(marca) {
+async function cargarDisenoBus(placa) {
     try {
         const codR = new URLSearchParams(window.location.search).get('codR');
         const busElement = document.getElementById('bus');
@@ -284,15 +284,15 @@ async function cargarDisenoBus(marca) {
             }
         }
         
-        if (marca === "n") {
-            const noMarcaDiv = document.createElement('div');
-            noMarcaDiv.className = 'noMarca';
-            noMarcaDiv.textContent = 'SIN BUS SELECCIONADO';
-            busElement.appendChild(noMarcaDiv);
+        if (placa === "n") {
+            const noPlacaDiv = document.createElement('div');
+            noPlacaDiv.className = 'noMarca';
+            noPlacaDiv.textContent = 'SIN BUS SELECCIONADO';
+            busElement.appendChild(noPlacaDiv);
         }
         
         const [disenoResponse, pasajerosResponse] = await Promise.all([
-            fetch(`php/common/getBus.php?nombre=${encodeURIComponent(marca)}`),
+            fetch(`php/common/getBus.php?placa=${encodeURIComponent(placa)}`),
             fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`)
         ]);
         

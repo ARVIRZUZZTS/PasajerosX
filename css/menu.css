@@ -101,7 +101,7 @@ main {
     width: 100%;
 }
 
-#crear , #diario, #marca, #flota{
+#crear , #diario, #marca, #flota, #chofer{
     color: rgb(255, 255, 255);
     border: none;
     padding: 8px 0;
@@ -141,6 +141,12 @@ main {
 }
 #flota:hover {
     background-color: rgb(204, 109, 0);
+}
+#chofer {
+    background-color: rgb(225, 0, 255);
+}
+#chofer:hover {
+    background-color: rgb(240, 126, 255);
 }
 
 

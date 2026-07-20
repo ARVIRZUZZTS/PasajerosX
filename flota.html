@@ -34,16 +34,41 @@
         <div id="formFlota" style="display:none;">
             <h2 id="formTitle">NUEVA FLOTA</h2>
             <input type="hidden" id="editOriginal">
-            <input type="text" id="placa" placeholder="PLACA (ej: 1234-ABC)" maxlength="8" style="text-transform:uppercase" oninput="validarPlaca()">
-            <div id="placaError" class="error"></div>
-            <input type="text" id="propietario" placeholder="PROPIETARIO">
-            <input type="text" id="conductor1" placeholder="CONDUCTOR 1">
-            <input type="text" id="licencia1" placeholder="LICENCIA 1">
-            <input type="text" id="conductor2" placeholder="CONDUCTOR 2">
-            <input type="text" id="licencia2" placeholder="LICENCIA 2">
-            <select id="nombre_planilla">
-                <option value="">SIN PLANILLA</option>
-            </select>
+            <div class="field-group">
+                <label>PLACA</label>
+                <input type="text" id="placa" placeholder="1234-ABC" maxlength="8" style="text-transform:uppercase" oninput="validarPlaca()">
+                <div id="placaError" class="error"></div>
+            </div>
+            <div class="field-group">
+                <label>PROPIETARIO</label>
+                <input type="text" id="propietario" placeholder="PROPIETARIO">
+            </div>
+            <div class="field-group">
+                <label>MARCA</label>
+                <input type="text" id="marca" placeholder="MARCA">
+            </div>
+            <div class="field-group">
+                <label>CONDUCTOR 1</label>
+                <input type="text" id="conductor1" placeholder="CONDUCTOR 1">
+            </div>
+            <div class="field-group">
+                <label>LICENCIA 1</label>
+                <input type="text" id="licencia1" placeholder="LICENCIA 1">
+            </div>
+            <div class="field-group">
+                <label>CONDUCTOR 2</label>
+                <input type="text" id="conductor2" placeholder="CONDUCTOR 2">
+            </div>
+            <div class="field-group">
+                <label>LICENCIA 2</label>
+                <input type="text" id="licencia2" placeholder="LICENCIA 2">
+            </div>
+            <div class="field-group">
+                <label>PLANILLA</label>
+                <select id="nombre_planilla">
+                    <option value="">SIN PLANILLA</option>
+                </select>
+            </div>
             <div class="formButtons">
                 <button id="guardarFlota" onclick="guardarFlota()">GUARDAR</button>
                 <button id="cancelarFlota" onclick="cancelarForm()">CANCELAR</button>

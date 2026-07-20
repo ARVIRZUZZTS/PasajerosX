@@ -24,12 +24,12 @@ function add(asiento) {
     const fecha = encodeURIComponent(params.get("fecha"));
     const c1 = encodeURIComponent(document.getElementById('c1').textContent.trim());
     const pl = encodeURIComponent(document.getElementById('pl').textContent.trim());
-    const ma = encodeURIComponent(document.getElementById('ma').textContent.trim());
+    const placa = encodeURIComponent(document.getElementById('pl').textContent.trim());
     const fe = encodeURIComponent(document.getElementById('fe').textContent.trim());
     const dt = encodeURIComponent(document.getElementById('dt').textContent.trim());
     const as = encodeURIComponent(asiento);
     const hh = encodeURIComponent(document.getElementById('hr').textContent.trim());
-    window.location.href = `pasajero.html?fecha=${fecha}&codR=${codR}&c1=${c1}&pl=${pl}&ma=${ma}&fe=${fe}&dt=${dt}&as=${as}&hh=${hh}`;
+    window.location.href = `pasajero.html?fecha=${fecha}&codR=${codR}&c1=${c1}&pl=${pl}&placa=${placa}&fe=${fe}&dt=${dt}&as=${as}&hh=${hh}`;
 }
 
 function obtenerDatosReporte(codR) {
@@ -43,12 +43,25 @@ function obtenerDatosReporte(codR) {
             document.getElementById('ay').textContent = data.ayudante || '';
             document.getElementById('dt').textContent = data.destino || '';
             document.getElementById('pl').textContent = data.placa || '';
-            document.getElementById('ma').textContent = data.marca || '';
             document.getElementById('fe').textContent = data.fecha || '';
             document.getElementById('hr').textContent = data.hora || '';
             document.getElementById('ca').textContent = data.carril || '';
-            if (data.marca) {
-                cargarDisenoBus(data.marca);
+            if (data.placa) {
+                fetch(`php/flota/getFlota.php?placa=${encodeURIComponent(data.placa)}`)
+                    .then(res => res.json())
+                    .then(flota => {
+                        document.getElementById('placa').textContent = flota?.nombre_planilla || 'SIN PLANILLA';
+                        document.getElementById('propietario').textContent = flota?.propietario || '-';
+                        document.getElementById('marca').textContent = flota?.marca || '-';
+                    })
+                    .catch(() => {
+                        document.getElementById('placa').textContent = 'SIN PLANILLA';
+                    });
+                cargarDisenoBus(data.placa);
+            } else {
+                document.getElementById('placa').textContent = '';
+                document.getElementById('propietario').textContent = '';
+                document.getElementById('marca').textContent = '';
             }
         })
         .catch(error => {
@@ -127,7 +140,7 @@ function obtenerPasajeros(codR) {
         });
 }
 
-async function cargarDisenoBus(marca) {
+async function cargarDisenoBus(placa) {
   try {
     const codR = new URLSearchParams(window.location.search).get('codR');
     const busElement = document.getElementById('bus');
@@ -135,7 +148,7 @@ async function cargarDisenoBus(marca) {
     
     // Obtener diseño del bus y pasajeros en paralelo
     const [disenoResponse, pasajerosResponse] = await Promise.all([
-      fetch(`php/common/getBus.php?nombre=${encodeURIComponent(marca)}`),
+      fetch(`php/common/getBus.php?placa=${encodeURIComponent(placa)}`),
       fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`)
     ]);
     
@@ -240,10 +253,11 @@ function printy(codP) {
         ay: document.getElementById("ay").textContent,
         dt: document.getElementById("dt").textContent,
         pl: document.getElementById("pl").textContent,
-        ma: document.getElementById("ma").textContent,
+        placa: document.getElementById("placa").textContent,
         fe: fechaActual,
         hr: document.getElementById("hr").textContent,
         ca: document.getElementById("ca").textContent,
+        marca: document.getElementById("marca").textContent,
         horaActual: horaActual
     };
 
@@ -662,6 +676,81 @@ function printIndividualTicket(codP, datos, option) {
             window.print();
             printPasajero.style.display = 'none';
         }, 500);
+    };
+}
+function printOrdenSalida() {
+    const printReporte = document.getElementById('printReporte');
+    const datos = {
+        c1: document.getElementById("c1").textContent,
+        c2: document.getElementById("c2").textContent,
+        l1: document.getElementById("l1").textContent,
+        l2: document.getElementById("l2").textContent,
+        dt: document.getElementById("dt").textContent,
+        pl: document.getElementById("pl").textContent,
+        fe: document.getElementById("fe").textContent,
+        hr: document.getElementById("hr").textContent,
+        marca: document.getElementById("marca").textContent
+    };
+    printReporte.style.display = 'none';
+    printReporte.innerHTML = '';
+
+    const template = `
+        <div class="os-copy">
+            <div class="os-content">
+                <div class="os-header">
+                    <img class="os-logo" src="img/logXXF.png" alt="Logo">
+                    <h1>ORDEN DE SALIDA</h1>
+                </div>
+                <div class="os-body">
+                    <div class="os-left">
+                        <h2>CONDUCTOR: ${datos.c1}</h2>
+                        <h2>CONDUCTOR: ${datos.c2}</h2>
+                        <h2>MARCA: ${datos.marca}</h2>
+                        <h2>DESTINO: ${datos.dt}</h2>
+                    </div>
+                    <div class="os-right">
+                        <h2>BREVET: ${datos.l1}</h2>
+                        <h2>BREVET: ${datos.l2}</h2>
+                        <h2>PLACA: ${datos.pl}</h2>
+                        <h2>HR. SALIDA: ${datos.hr}</h2>
+                    </div>
+                </div>
+                <h3 class="os-fecha">SANTA CRUZ - ${datos.fe}</h3>
+                <div class="os-signatures">
+                    <h2 class="os-sig">Administrador</h2>
+                    <h2 class="os-sig">V°B° JEFE SECC. TECNICA</h2>
+                </div>
+            </div>
+        </div>
+    `;
+
+    for (let i = 0; i < 2; i++) {
+        const div = document.createElement('div');
+        div.innerHTML = template;
+        printReporte.appendChild(div);
+        if (i < 1) {
+            const brk = document.createElement('div');
+            brk.style.pageBreakAfter = 'always';
+            printReporte.appendChild(brk);
+        }
+    }
+
+    printReporte.style.display = 'block';
+
+    const img = new Image();
+    img.src = 'img/logXXF.png';
+    img.onload = function() {
+        document.querySelectorAll('.os-logo').forEach(el => el.src = img.src);
+        setTimeout(() => {
+            window.print();
+            printReporte.style.display = 'none';
+        }, 200);
+    };
+    img.onerror = function() {
+        setTimeout(() => {
+            window.print();
+            printReporte.style.display = 'none';
+        }, 200);
     };
 }
 function del() {

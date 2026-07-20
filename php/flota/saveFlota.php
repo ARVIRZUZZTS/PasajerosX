@@ -11,6 +11,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 $placa = strtoupper(trim($input['placa'] ?? ''));
 $propietario = trim($input['propietario'] ?? '');
+$marca = trim($input['marca'] ?? '');
 $conductor1 = trim($input['conductor1'] ?? '');
 $licencia1 = trim($input['licencia1'] ?? '');
 $conductor2 = trim($input['conductor2'] ?? '');
@@ -30,11 +31,11 @@ if (!preg_match('/^\d{4}-[A-Z]{3}$/', $placa)) {
 
 try {
     if (!empty($editOriginal)) {
-        $stmt = $conexion->prepare("UPDATE flota SET placa=?, propietario=?, conductor1=?, licencia1=?, conductor2=?, licencia2=?, nombre_planilla=? WHERE placa=?");
-        $stmt->bind_param("ssssssss", $placa, $propietario, $conductor1, $licencia1, $conductor2, $licencia2, $nombre_planilla, $editOriginal);
+        $stmt = $conexion->prepare("UPDATE flota SET placa=?, propietario=?, marca=?, conductor1=?, licencia1=?, conductor2=?, licencia2=?, nombre_planilla=? WHERE placa=?");
+        $stmt->bind_param("sssssssss", $placa, $propietario, $marca, $conductor1, $licencia1, $conductor2, $licencia2, $nombre_planilla, $editOriginal);
     } else {
-        $stmt = $conexion->prepare("INSERT INTO flota (placa, propietario, conductor1, licencia1, conductor2, licencia2, nombre_planilla) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssss", $placa, $propietario, $conductor1, $licencia1, $conductor2, $licencia2, $nombre_planilla);
+        $stmt = $conexion->prepare("INSERT INTO flota (placa, propietario, marca, conductor1, licencia1, conductor2, licencia2, nombre_planilla) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssss", $placa, $propietario, $marca, $conductor1, $licencia1, $conductor2, $licencia2, $nombre_planilla);
     }
 
     if ($stmt->execute()) {

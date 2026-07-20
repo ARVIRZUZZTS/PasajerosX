@@ -63,7 +63,7 @@ async function cargarBusesDiarios() {
                 innerContainer.appendChild(busDiv);
                 
                 // Cargar el diseño del bus con los asientos ocupados
-                cargarMiniDisenoBus(bus.marca, busDiv, bus.codR);
+                cargarMiniDisenoBus(bus.placa, busDiv, bus.codR);
                 
                 busContainer.appendChild(innerContainer);
                 grupoDiv.appendChild(busContainer);
@@ -78,11 +78,11 @@ async function cargarBusesDiarios() {
 }
 
 // Función para cargar un diseño reducido del bus con asientos ocupados
-async function cargarMiniDisenoBus(marca, contenedor, codR) {
+async function cargarMiniDisenoBus(placa, contenedor, codR) {
     try {
         // Obtener diseño del bus y pasajeros en paralelo
         const [disenoResponse, pasajerosResponse] = await Promise.all([
-            fetch(`php/common/getBus.php?nombre=${encodeURIComponent(marca)}`),
+            fetch(`php/common/getBus.php?placa=${encodeURIComponent(placa)}`),
             fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`)
         ]);
         
@@ -151,7 +151,7 @@ async function cargarMiniDisenoBus(marca, contenedor, codR) {
             contenedor.appendChild(div);
         });
     } catch (error) {
-        console.error(`Error al cargar el diseño mini para ${marca}:`, error);
+        console.error(`Error al cargar el diseño mini para ${placa}:`, error);
     }
 }
 
@@ -171,13 +171,13 @@ async function agregarPasajero(codR, asiento) {
         const fechaCod = encodeURIComponent(fecha);
         const c1 = encodeURIComponent(reporte.con1 || '');
         const pl = encodeURIComponent(reporte.placa || '');
-        const ma = encodeURIComponent(reporte.marca || '');
+        const placa = encodeURIComponent(reporte.placa || '');
         const dt = encodeURIComponent(reporte.destino || '');
         const as = encodeURIComponent(asiento);
         const hh = encodeURIComponent(reporte.hora || '');
         
         // Redirigir con todos los parámetros necesarios
-        window.location.href = `pasajero.html?codR=${codR}&fecha=${fechaCod}&c1=${c1}&pl=${pl}&ma=${ma}&dt=${dt}&as=${as}&hh=${hh}`;
+        window.location.href = `pasajero.html?codR=${codR}&fecha=${fechaCod}&c1=${c1}&pl=${pl}&placa=${placa}&dt=${dt}&as=${as}&hh=${hh}`;
         
     } catch (error) {
         console.error('Error al obtener datos del reporte:', error);

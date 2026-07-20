@@ -10,7 +10,7 @@ $response = [];
 if ($conexion) {
     // Consulta para obtener los buses del día específico
     $query = "SELECT r.codR, r.con1, r.lic1, r.con2, r.lic2, r.ayudante, 
-                     r.destino, r.marca, r.placa, r.hora, r.fecha, r.carril
+                     r.destino, r.placa, r.hora, r.fecha, r.carril
               FROM reporte r
               WHERE r.fecha = ?
               ORDER BY r.hora ASC";

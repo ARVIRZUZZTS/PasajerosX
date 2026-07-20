@@ -123,7 +123,7 @@ input {
     margin-bottom: 0px;
 }
 
-#print , #back , #edit , #add, #deta, #del {
+#print , #back , #edit , #add, #deta, #del, #ordenSalida{
     background-color: rgb(0, 145, 170);
     color: rgb(255, 255, 255);
     border: none;
@@ -249,7 +249,7 @@ input {
 }
 #entradas {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     padding: 0px 50px;
 }
 #entradas div {
@@ -561,5 +561,68 @@ footer h1 {
     }
     #descue {
         text-align: left !important;
+    }
+    /*///////////////ORDEN DE SALIDA////////////////////////////////////*/
+    .os-copy {
+        padding: 15px 20px;
+        border: 1px solid black;
+        border-radius: 20px;
+        box-sizing: content-box;
+        transform: rotate(270deg);
+        transform-origin: center center;
+    }
+    .os-content {
+        width: 500px;
+        display: flex;
+        flex-direction: column;
+        
+    }
+    .os-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    .os-logo {
+        width: 180px;
+        height: auto;
+    }
+    .os-header h1 {
+        margin: 5px 0;
+        text-align: center;
+        font-size: 24px;
+    }
+    .os-body {
+        display: flex;
+        width: 100%;
+        font-size: 14px;
+    }
+    .os-left {
+        width: 60%;
+    }
+    .os-right {
+        width: 40%;
+    }
+    .os-body h3 {
+        margin: 4px 0;
+        padding: 2px 5px;
+        font-size: 14px;
+    }
+    .os-fecha {
+        text-align: center;
+        margin: 10px 0 15px 0;
+        font-size: 16px;
+    }
+    .os-signatures {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 5px;
+    }
+    .os-sig {
+        border-top: 1px solid black;
+        padding-top: 6px;
+        text-align: center;
+        width: 40%;
+        font-size: 14px;
     }
 }   

@@ -1,5 +1,4 @@
 ﻿const conductorLicenciaMap = new Map();
-const planillasMap = new Map();
 
 // Obtener codR desde la URL
 const params = new URLSearchParams(window.location.search);
@@ -10,7 +9,6 @@ function back() {
     const fecha = document.getElementById('fe').value || params.get('fecha');
     window.location.href = `ver.html?codR=${codR}&fecha=${encodeURIComponent(fecha)}`;
 }
-// Obtener datos del reporte y colocarlos como placeholder
 function getReporte() {
     fetch(`php/common/reporte.php?codR=${encodeURIComponent(codR)}`)
         .then(response => response.json())
@@ -22,31 +20,32 @@ function getReporte() {
             document.getElementById('ay').placeholder = data.ayudante || 'AYUDANTE';
             document.getElementById('dt').placeholder = data.destino || 'DESTINO';
             document.getElementById('pl').placeholder = data.placa || 'PLACA';
-            document.getElementById('ma').placeholder = data.marca || 'MARCA';
             document.getElementById('fe').placeholder = data.fecha || 'FECHA';
             document.getElementById('hr').placeholder = data.hora || 'HORA';
             document.getElementById('ca').placeholder = data.carril || 'CARRIL';
-            cargarDisenoBus(data.marca);
+            if (data.placa) {
+                fetch(`php/flota/getFlota.php?placa=${encodeURIComponent(data.placa)}`)
+                    .then(r => r.json())
+                    .then(flota => {
+                        document.getElementById('planilla').value = flota?.nombre_planilla || '';
+                        document.getElementById('propietario').value = flota?.propietario || '';
+                        document.getElementById('marca').value = flota?.marca || '';
+                    })
+                    .catch(() => {});
+                cargarDisenoBus(data.placa);
+            }
         })
         .catch(error => console.error('Error al obtener el reporte:', error));
 }
+
 async function loadDatalists() {
     try {
         console.time('Carga completa');
         
-        // 1. Cargar datos desde el servidor
-        console.time('Fetch datos');
         const response = await fetch('php/common/getList.php');
         if (!response.ok) throw new Error('Error en la respuesta del servidor');
         const lists = await response.json();
-        console.timeEnd('Fetch datos');
-        console.log("Datos recibidos:", { 
-            conductores: lists.conLic?.length || 0, 
-            planillas: lists.planillasCompletas?.length || 0 
-        });
 
-        // 2. Procesar pares conductor-licencia
-        console.time('Procesar conductores');
         if (lists.conLic?.length) {
             lists.conLic.forEach(pair => {
                 const [conductor, licencia] = pair.split('&');
@@ -55,125 +54,61 @@ async function loadDatalists() {
                 }
             });
         }
-        console.timeEnd('Procesar conductores');
 
-        // 3. Procesar datos de planillas (nuevo)
-        console.time('Procesar planillas');
-        if (lists.planillasCompletas?.length) {
-            lists.planillasCompletas.forEach(planilla => {
-                planillasMap.set(planilla.nombre, {
-                    placa: planilla.placa,
-                    conductor: planilla.conductor,
-                    licencia: planilla.licencia
-                });
-            });
-        } else {
-            // Datos por defecto (backup)
-            const planillasDefault = {
-                "EAY JHONNY CABALLERO": { placa: "3056-EAY", conductor: "HUGO GABRIEL RASGUIDO", licencia: "8036400" },
-                "BNE CARMEN VELASCO": { placa: "1803-BNE", conductor: "-", licencia: "0" },
-                "FIU MIGUELINA PEREDO": { placa: "1800-FIU", conductor: "MARIO CRUZ LACATO", licencia: "7995969" },
-                "DER REINALDO ALBERTO": { placa: "2537-DER", conductor: "REINALDO JORGE OCZACHOQUE", licencia: "3531243" },
-                "UKF JHONNY CABALLERO": { placa: "2996-UKF", conductor: "JHONNY VARGAS HERBAS", licencia: "3780185" },
-                "CPE ELOY TERCEROS": { placa: "2447-CPE", conductor: "ELOY TERCEROS MONTAÑO", licencia: "4512727" },
-                "RXU JHONNY CABALLERO": { placa: "2494-RXU", conductor: "CALIXTO ANDIA QUINTEROS", licencia: "2951649" },
-                "TFU RUTH CABALLERO": { placa: "2550-TFU", conductor: "DEMETRIO GALINDO MERIDA", licencia: "4438619" },
-                "UKE ERICK MENDOZA": { placa: "1194-UKE", conductor: "ERICK MENDOZA MONTESINOS", licencia: "6472193" },
-                "UTA JHONNY CABALLERO": { placa: "2830-UTA", conductor: "ARIEL VARGAS VALLEJOS", licencia: "7939232" },
-                "KUX VIVIAN CABALLERO": { placa: "1461-KUX", conductor: "WILSON LAZARTE MONTAÑO", licencia: "8691695" },
-                "EYR JUAN QUISPE LLAMPA": { placa: "1580-EYR", conductor: "JUAN QUISPE LLAMPAS", licencia: "4321568" },
-                "YXG JHONNY VARGAS": { placa: "2130-YXG", conductor: "JHONNY VARGAS", licencia: "6053938" },
-                "DKT RICHAR IRUSTA": { placa: "2447-DKT", conductor: "RICHAR IRUSTA JIMENEZ", licencia: "4560090" },
-                "YNF JHONNY CABALLERO": { placa: "2701-YNF", conductor: "ARCENIO CABALLERO V.", licencia: "3567742" },
-                "KGD VICTOR HUGO VELASCO": { placa: "2264-KGD", conductor: "VICTOR HUGO VELARSCO CAERO", licencia: "4403658" }
-            };
-            Object.entries(planillasDefault).forEach(([nombre, datos]) => {
-                planillasMap.set(nombre, datos);
-            });
-        }
-        console.timeEnd('Procesar planillas');
-
-        // 4. Llenar datalists
-        console.time('Llenar datalists');
         const fillDatalist = (id, items) => {
             const datalist = document.getElementById(id);
             if (!datalist) return;
-            
             const fragment = document.createDocumentFragment();
             (items || []).slice(0, 1000).forEach(item => {
                 const option = document.createElement('option');
                 option.value = item;
                 fragment.appendChild(option);
             });
-            
             datalist.innerHTML = '';
             datalist.appendChild(fragment);
         };
 
-        // Conductores (combinados)
-        fillDatalist('c1-list', [...new Set([...(lists.c1 || []), ...(lists.c2 || [])])]);
-        fillDatalist('c2-list', [...new Set([...(lists.c1 || []), ...(lists.c2 || [])])]);
-        
-        // Planillas/Marcas
-        fillDatalist('ma-list', [...planillasMap.keys()]);
-        
-        // Otros datalists
+        let choferNombres = [];
+        try {
+            const choferRes = await fetch('php/chofer/getChofer.php');
+            if (choferRes.ok) {
+                const choferes = await choferRes.json();
+                if (choferes?.length) {
+                    choferNombres = choferes.map(c => c.nombre_chofer);
+                }
+            }
+        } catch (e) {}
+
+        const condNames = [...new Set([...(lists.c1 || []), ...(lists.c2 || []), ...choferNombres])];
+        fillDatalist('c1-list', condNames);
+        fillDatalist('c2-list', condNames);
+
         for (const [key, values] of Object.entries(lists)) {
             if (['conLic', 'c1', 'c2', 'planillasCompletas'].includes(key)) continue;
             fillDatalist(`${key}-list`, values);
         }
         console.timeEnd('Llenar datalists');
 
-        // 5. Configurar autocompletados
         console.time('Configurar eventos');
         
-        // Autocompletado conductor->licencia
         const setupConductorLicencia = (conductorId, licenciaId) => {
             const conductorInput = document.getElementById(conductorId);
             const licenciaInput = document.getElementById(licenciaId);
-            
             if (!conductorInput || !licenciaInput) return;
-            
             const updateLicencia = () => {
                 const valor = conductorInput.value.trim();
                 licenciaInput.value = conductorLicenciaMap.get(valor) || '';
             };
-            
             conductorInput.addEventListener('input', updateLicencia);
             conductorInput.addEventListener('change', updateLicencia);
         };
 
         setupConductorLicencia('c1', 'l1');
         setupConductorLicencia('c2', 'l2');
-        
-        // Autocompletado planilla (nuevo)
-        const setupPlanillas = () => {
-            const planillaInput = document.getElementById('ma');
-            const placaInput = document.getElementById('pl');
-            const conductorInput = document.getElementById('c1');
-            const licenciaInput = document.getElementById('l1');
-            
-            if (!planillaInput || !placaInput || !conductorInput || !licenciaInput) return;
-            
-            planillaInput.addEventListener('change', function() {
-                const planilla = this.value.trim();
-                const datos = planillasMap.get(planilla);
-                
-                if (datos) {
-                    placaInput.value = datos.placa;
-                    conductorInput.value = datos.conductor;
-                    licenciaInput.value = datos.licencia;
-                    
-                    // Forzar actualización de eventos
-                    conductorInput.dispatchEvent(new Event('input'));
-                    console.log(`Planilla "${planilla}" cargada:`, datos);
-                }
-            });
-        };
-        
-        setupPlanillas();
-        console.timeEnd('Configurar eventos');
 
+        setupPlacaAutocomplete();
+        setupChoferAutocomplete();
+        console.timeEnd('Configurar eventos');
         console.timeEnd('Carga completa');
         
     } catch (error) {
@@ -181,21 +116,64 @@ async function loadDatalists() {
         alert("Error al cargar datos. Por favor recarga la página.");
     }
 }
-// Guardar (solo si se ingresan valores nuevos)
-// Guardar (solo si se ingresan valores nuevos)
+function setupPlacaAutocomplete() {
+    const plInput = document.getElementById('pl');
+    if (!plInput) return;
+
+    plInput.addEventListener('change', async function() {
+        const placa = this.value.trim();
+        if (!placa) return;
+        try {
+            const res = await fetch(`php/flota/getFlota.php?placa=${encodeURIComponent(placa)}`);
+            const flota = await res.json();
+            if (flota && !flota.error) {
+                document.getElementById('planilla').value = flota.nombre_planilla || '';
+                document.getElementById('propietario').value = flota.propietario || '';
+                document.getElementById('marca').value = flota.marca || '';
+                document.getElementById('c1').placeholder = flota.conductor1 || '';
+                document.getElementById('l1').placeholder = flota.licencia1 || '';
+                document.getElementById('c2').placeholder = flota.conductor2 || '';
+                document.getElementById('l2').placeholder = flota.licencia2 || '';
+            }
+        } catch (e) {
+            console.error('Error al autocompletar por placa:', e);
+        }
+    });
+}
+
+function setupChoferAutocomplete() {
+    const choferMap = new Map();
+    fetch('php/chofer/getChofer.php')
+        .then(r => r.json())
+        .then(choferes => {
+            if (choferes?.length) {
+                choferes.forEach(c => choferMap.set(c.nombre_chofer, c.licencia));
+            }
+        });
+
+    const setup = (conductorId, licenciaId) => {
+        const condInput = document.getElementById(conductorId);
+        const licInput = document.getElementById(licenciaId);
+        if (!condInput || !licInput) return;
+        condInput.addEventListener('change', () => {
+            const nombre = condInput.value.trim();
+            const licencia = choferMap.get(nombre);
+            if (licencia) licInput.value = licencia;
+        });
+    };
+    setup('c1', 'l1');
+    setup('c2', 'l2');
+}
+
+const getVal = (id) => {
+    const el = document.getElementById(id);
+    return el.value.trim() || el.placeholder.trim();
+};
+
 async function save() {
 
-    const marcaInput = document.getElementById('ma').value || document.getElementById('ma').placeholder;
-    const marcasExistentes = await getMarcasExistentes();
-    
-    if (marcaInput && !marcasExistentes.includes(marcaInput)) {
-        alert("ESA MARCA NO EXISTE");
-        return;
-    }
-
     // Primero verificar asientos ocupados
-    const marca = document.getElementById('ma').value || document.getElementById('ma').placeholder;
-    const asientosOcupados = await getAsientosOcupados(marca);
+    const asientosOcupados = await getAsientosOcupados();
     
     
     // Verificar si hay asientos duplicados en los inputs
@@ -250,7 +228,7 @@ async function save() {
     reload();
 }
 
-async function getAsientosOcupados(marca) {
+async function getAsientosOcupados() {
     try {
         const codR = new URLSearchParams(window.location.search).get('codR');
         
@@ -267,26 +245,17 @@ async function getAsientosOcupados(marca) {
 
 async function guardarDatos() {
     const codR = new URLSearchParams(window.location.search).get('codR');
-    const marcaInput = document.getElementById('ma').value || document.getElementById('ma').placeholder;
     const fechaInput = document.getElementById('fe').value || document.getElementById('fe').placeholder;
-
-    const marcasExistentes = await getMarcasExistentes();
-    
-    if (marcaInput && !marcasExistentes.includes(marcaInput)) {
-        alert("ESA MARCA NO EXISTE");
-        return;
-    }
 
     const datosReporte = {
         codR: codR,
-        con1: document.getElementById('c1').value || undefined,
-        lic1: document.getElementById('l1').value || undefined,
-        con2: document.getElementById('c2').value || undefined,
-        lic2: document.getElementById('l2').value || undefined,
+        con1: getVal('c1') || undefined,
+        lic1: getVal('l1') || undefined,
+        con2: getVal('c2') || undefined,
+        lic2: getVal('l2') || undefined,
         ayudante: document.getElementById('ay').value || undefined,
         destino: document.getElementById('dt').value || undefined,
         placa: document.getElementById('pl').value || undefined,
-        marca: marcaInput,
         fecha: fechaInput,
         hora: document.getElementById('hr').value || undefined,
         carril: document.getElementById('ca').value || undefined
@@ -374,17 +343,7 @@ async function guardarDatos() {
         alert("Ocurrió un error al guardar: " + error.message);
     }
 }
-async function getMarcasExistentes() {
-    try {
-        const response = await fetch('php/common/getList.php');
-        const lists = await response.json();
-        return lists.ma || []; // Asume que 'marca' es una de las listas devueltas por getList.php
-    } catch (error) {
-        console.error("Error al obtener marcas existentes:", error);
-        return [];
-    }
-}
-async function cargarDisenoBus(marca) {
+async function cargarDisenoBus(placa) {
   try {
     const codR = new URLSearchParams(window.location.search).get('codR');
     const busElement = document.getElementById('bus');
@@ -392,7 +351,7 @@ async function cargarDisenoBus(marca) {
     
     // Obtener diseño del bus y pasajeros en paralelo
     const [disenoResponse, pasajerosResponse] = await Promise.all([
-      fetch(`php/common/getBus.php?nombre=${encodeURIComponent(marca)}`),
+      fetch(`php/common/getBus.php?placa=${encodeURIComponent(placa)}`),
       fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`)
     ]);
     

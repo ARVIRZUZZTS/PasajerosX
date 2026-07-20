@@ -25,6 +25,7 @@ function mostrarForm(placa) {
                     document.getElementById('editOriginal').value = data.placa;
                     document.getElementById('placa').value = data.placa;
                     document.getElementById('propietario').value = data.propietario || '';
+                    document.getElementById('marca').value = data.marca || '';
                     document.getElementById('conductor1').value = data.conductor1 || '';
                     document.getElementById('licencia1').value = data.licencia1 || '';
                     document.getElementById('conductor2').value = data.conductor2 || '';
@@ -37,6 +38,7 @@ function mostrarForm(placa) {
         document.getElementById('editOriginal').value = '';
         document.getElementById('placa').value = '';
         document.getElementById('propietario').value = '';
+        document.getElementById('marca').value = '';
         document.getElementById('conductor1').value = '';
         document.getElementById('licencia1').value = '';
         document.getElementById('conductor2').value = '';
@@ -75,6 +77,7 @@ async function guardarFlota() {
     const data = {
         placa: placa,
         propietario: document.getElementById('propietario').value.trim(),
+        marca: document.getElementById('marca').value.trim(),
         conductor1: document.getElementById('conductor1').value.trim(),
         licencia1: document.getElementById('licencia1').value.trim(),
         conductor2: document.getElementById('conductor2').value.trim(),
@@ -155,6 +158,7 @@ async function cargarFlotas() {
             detalle.className = 'detalle';
             let texto = '';
             if (f.propietario) texto += `Dueño: ${f.propietario}`;
+            if (f.marca) texto += (texto ? ' | ' : '') + `Marca: ${f.marca}`;
             if (f.conductor1) texto += (texto ? ' | ' : '') + `Cond1: ${f.conductor1}`;
             if (f.conductor2) texto += (texto ? ' | ' : '') + `Cond2: ${f.conductor2}`;
             if (f.nombre_planilla) texto += (texto ? ' | ' : '') + `Planilla: ${f.nombre_planilla}`;

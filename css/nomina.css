@@ -197,7 +197,7 @@ footer h1 {
 }
 #step1 p {
     margin-top: 15px;
-    color: #666;
+    color: #0a1f44;
     font-size: 14px;
 }
 
@@ -243,7 +243,7 @@ footer h1 {
 .field label {
     font-size: 15px;
     font-weight: bold;
-    color: #666;
+    color: #0a1f44;
     text-transform: uppercase;
 }
 .field input {

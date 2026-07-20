@@ -31,7 +31,7 @@ agregarCampo($campos, $tipos, $valores, 'lic2', $data['lic2']);
 agregarCampo($campos, $tipos, $valores, 'ayudante', $data['ayudante']);
 agregarCampo($campos, $tipos, $valores, 'destino', $data['destino']);
 agregarCampo($campos, $tipos, $valores, 'placa', $data['placa']);
-agregarCampo($campos, $tipos, $valores, 'marca', $data['marca']);
+
 agregarCampo($campos, $tipos, $valores, 'fecha', $data['fecha']);
 agregarCampo($campos, $tipos, $valores, 'hora', $data['hora']);
 

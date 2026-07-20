@@ -43,6 +43,22 @@ async function loadDatalists() {
         };
         fillDatalist('hr-list', lists.hr);
         fillDatalist('ca-list', lists.ca);
+
+        const choferResponse = await fetch('php/chofer/getChofer.php');
+        if (choferResponse.ok) {
+            const choferes = await choferResponse.json();
+            const choferList = document.getElementById('chofer-list');
+            if (choferList && choferes?.length) {
+                const cf = document.createDocumentFragment();
+                choferes.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.nombre_chofer;
+                    cf.appendChild(option);
+                });
+                choferList.innerHTML = '';
+                choferList.appendChild(cf);
+            }
+        }
     } catch (error) {
         console.error("Error:", error);
         alert("Error al cargar datos. Por favor recarga la página.");
@@ -58,6 +74,21 @@ function resetPlaca() {
     document.getElementById('step1').style.display = 'flex';
     document.getElementById('pl').value = '';
     document.getElementById('pl-input').value = '';
+    document.getElementById('pl-display').value = '';
+    document.getElementById('pl-display').placeholder = '';
+    document.getElementById('propietario').value = '';
+    document.getElementById('marca').value = '';
+    document.getElementById('c1').value = '';
+    document.getElementById('c1').placeholder = '';
+    document.getElementById('l1').value = '';
+    document.getElementById('l1').placeholder = '';
+    document.getElementById('l1').placeholder = '';
+    document.getElementById('c2').value = '';
+    document.getElementById('c2').placeholder = '';
+    document.getElementById('l2').value = '';
+    document.getElementById('l2').placeholder = '';
+    document.getElementById('placa').value = '';
+    document.getElementById('placa').placeholder = '';
     document.getElementById('pl-input').focus();
 }
 
@@ -75,13 +106,21 @@ async function onPlacaSelect(placa) {
         }
 
         document.getElementById('pl').value = placa;
-        document.getElementById('pl-display').value = placa;
-        document.getElementById('c1').value = flota.conductor1 || '';
-        document.getElementById('l1').value = flota.licencia1 || '';
-        document.getElementById('c2').value = flota.conductor2 || '';
-        document.getElementById('l2').value = flota.licencia2 || '';
+        document.getElementById('pl-display').value = '';
+        document.getElementById('pl-display').placeholder = placa;
+        document.getElementById('propietario').value = flota.propietario || '';
+        document.getElementById('marca').value = flota.marca || '';
+        document.getElementById('c1').value = '';
+        document.getElementById('c1').placeholder = flota.conductor1 || '';
+        document.getElementById('l1').value = '';
+        document.getElementById('l1').placeholder = flota.licencia1 || '';
+        document.getElementById('c2').value = '';
+        document.getElementById('c2').placeholder = flota.conductor2 || '';
+        document.getElementById('l2').value = '';
+        document.getElementById('l2').placeholder = flota.licencia2 || '';
         document.getElementById('ay').value = '';
-        document.getElementById('ma').value = flota.nombre_planilla || '';
+        document.getElementById('placa').value = '';
+        document.getElementById('placa').placeholder = flota.nombre_planilla || '';
 
         const params = new URLSearchParams(window.location.search);
         const fechaParam = params.get("fecha");
@@ -111,14 +150,45 @@ async function onPlacaSelect(placa) {
     }
 }
 
+function setupChoferAutocomplete() {
+    const choferMap = new Map();
+    fetch('php/chofer/getChofer.php')
+        .then(r => r.json())
+        .then(choferes => {
+            if (choferes?.length) {
+                choferes.forEach(c => choferMap.set(c.nombre_chofer, c.licencia));
+            }
+        });
+
+    const setup = (conductorId, licenciaId) => {
+        const condInput = document.getElementById(conductorId);
+        const licInput = document.getElementById(licenciaId);
+        if (!condInput || !licInput) return;
+        condInput.addEventListener('change', () => {
+            const nombre = condInput.value.trim();
+            const licencia = choferMap.get(nombre);
+            if (licencia) {
+                licInput.value = licencia;
+            }
+        });
+    };
+    setup('c1', 'l1');
+    setup('c2', 'l2');
+}
+
+const getVal = (id) => {
+    const el = document.getElementById(id);
+    return el.value.trim() || el.placeholder.trim();
+};
+
 async function save() {
     const campos = {
-        c1: document.getElementById('c1').value.trim(),
-        l1: document.getElementById('l1').value.trim(),
-        c2: document.getElementById('c2').value.trim() || '-',
-        l2: document.getElementById('l2').value.trim() || '0',
+        c1: getVal('c1'),
+        l1: getVal('l1'),
+        c2: getVal('c2') || '-',
+        l2: getVal('l2') || '0',
         pl: document.getElementById('pl').value.trim(),
-        ma: document.getElementById('ma').value.trim(),
+        placa: getVal('placa'),
         dt: document.getElementById('dt').value.trim(),
         fe: document.getElementById('fe').value.trim(),
         hr: document.getElementById('hr').value.trim(),
@@ -188,6 +258,7 @@ window.onload = () => {
     loadDatalists();
     actHora();
     setInterval(actHora, 1000);
+    setupChoferAutocomplete();
 
     document.getElementById('pl-input').addEventListener('change', function() {
         onPlacaSelect(this.value.trim());

@@ -49,6 +49,12 @@
             </button>
             </div>
             <div class="bot">
+            <button id="ordenSalida" onclick="printOrdenSalida()">
+                <span class="emoji">🚌</span>
+                <span>SALIDA</span>
+            </button>
+            </div>
+            <div class="bot">
             <button id="del" onclick="del()">
                 <span class="emoji">🗑️</span>
                 <span>ELIMINAR</span>
@@ -63,6 +69,10 @@
                 <h1 id="titleDat"></h1>
                 <div id="entradas">
                     <div>
+                        <div>
+                            <h3>PROPIETARIO: </h3>
+                            <h3 id="propietario">-</h3>
+                        </div>
                         <div>
                             <h3>CONDUCTOR 1: </h3>
                             <h3 id="c1">CONDUCTOR 1</h3>
@@ -86,6 +96,10 @@
                     </div>
                     <div>
                         <div>
+                            <h3>MARCA: </h3>
+                            <h3 id="marca">-</h3>
+                        </div>
+                        <div>
                             <h3>LICENCIA 1: </h3>
                             <h3 id="l1">CONDUCTOR 1</h3>
                         </div>
@@ -99,7 +113,7 @@
                         </div>
                         <div>
                             <h3>PLANILLA:</h3>
-                            <h3 id="ma">PLANILLA</h3>
+                            <h3 id="placa">PLANILLA</h3>
                         </div>
                         <div>
                             <h3>HORA: </h3>
