@@ -47,9 +47,10 @@
                 <label>MARCA</label>
                 <input type="text" id="marca" placeholder="MARCA">
             </div>
+            <datalist id="listaChoferes"></datalist>
             <div class="field-group">
                 <label>CONDUCTOR 1</label>
-                <input type="text" id="conductor1" placeholder="CONDUCTOR 1">
+                <input type="text" id="conductor1" placeholder="CONDUCTOR 1" list="listaChoferes" oninput="autocompletarLicencia(1)">
             </div>
             <div class="field-group">
                 <label>LICENCIA 1</label>
@@ -57,7 +58,7 @@
             </div>
             <div class="field-group">
                 <label>CONDUCTOR 2</label>
-                <input type="text" id="conductor2" placeholder="CONDUCTOR 2">
+                <input type="text" id="conductor2" placeholder="CONDUCTOR 2" list="listaChoferes" oninput="autocompletarLicencia(2)">
             </div>
             <div class="field-group">
                 <label>LICENCIA 2</label>

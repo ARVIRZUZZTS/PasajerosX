@@ -263,4 +263,13 @@ window.onload = () => {
     document.getElementById('pl-input').addEventListener('change', function() {
         onPlacaSelect(this.value.trim());
     });
+
+    document.querySelectorAll('#step2 input').forEach(input => {
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                setTimeout(() => save(), 0);
+            }
+        });
+    });
 };

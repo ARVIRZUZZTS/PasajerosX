@@ -53,6 +53,40 @@ function cancelarForm() {
     document.getElementById('lista').style.display = 'block';
 }
 
+let choferesMap = {};
+
+function autocompletarLicencia(numero) {
+    const nombre = document.getElementById(`conductor${numero}`).value.trim();
+    const chofer = choferesMap[nombre];
+    if (chofer) {
+        document.getElementById(`licencia${numero}`).value = chofer.licencia || '';
+    }
+}
+
+async function cargarChoferes() {
+    try {
+        const response = await fetch('php/chofer/getChofer.php');
+        const choferes = await response.json();
+        if (!Array.isArray(choferes)) return;
+
+        const datalist = document.getElementById('listaChoferes');
+        datalist.innerHTML = '';
+        choferesMap = {};
+
+        choferes.forEach(c => {
+            const nombre = c.nombre_chofer;
+            if (!nombre) return;
+            choferesMap[nombre] = c;
+
+            const option = document.createElement('option');
+            option.value = nombre;
+            datalist.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error al cargar choferes:', error);
+    }
+}
+
 function validarPlaca() {
     const placa = document.getElementById('placa').value;
     const error = document.getElementById('placaError');
@@ -214,4 +248,5 @@ async function cargarPlanillas() {
 document.addEventListener('DOMContentLoaded', () => {
     cargarFlotas();
     cargarPlanillas();
+    cargarChoferes();
 });

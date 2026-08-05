@@ -699,26 +699,26 @@ function printOrdenSalida() {
             <div class="os-content">
                 <div class="os-header">
                     <img class="os-logo" src="img/logXXF.png" alt="Logo">
-                    <h1>ORDEN DE SALIDA</h1>
+                    <h2 class="os-salida">ORDEN DE SALIDA</h2>
                 </div>
                 <div class="os-body">
                     <div class="os-left">
-                        <h2>CONDUCTOR: ${datos.c1}</h2>
-                        <h2>CONDUCTOR: ${datos.c2}</h2>
-                        <h2>MARCA: ${datos.marca}</h2>
-                        <h2>DESTINO: ${datos.dt}</h2>
+                        <h4>CONDUCTOR:<span>..</span>${datos.c1}<span>..</span></h4>
+                        <h4>CONDUCTOR:<span>..</span>${datos.c2}<span>..</span></h4>
+                        <h4>MARCA:<span>..</span>${datos.marca}<span>..</span></h4>
+                        <h4>DESTINO:<span>..</span>${datos.dt}<span>..</span></h4>
                     </div>
                     <div class="os-right">
-                        <h2>BREVET: ${datos.l1}</h2>
-                        <h2>BREVET: ${datos.l2}</h2>
-                        <h2>PLACA: ${datos.pl}</h2>
-                        <h2>HR. SALIDA: ${datos.hr}</h2>
+                        <h4>BREVET:${datos.l1}</h4>
+                        <h4>BREVET:${datos.l2}</h4>
+                        <h4>PLACA:${datos.pl}</h4>
+                        <h4>HR.SALIDA:${datos.hr}</h4>
                     </div>
                 </div>
-                <h3 class="os-fecha">SANTA CRUZ - ${datos.fe}</h3>
+                <h5 class="os-fecha">..SANTA..CRUZ.....${datos.fe}..</h5>
                 <div class="os-signatures">
-                    <h2 class="os-sig">Administrador</h2>
-                    <h2 class="os-sig">V°B° JEFE SECC. TECNICA</h2>
+                    <h4 class="os-sig">Administrador</h4>
+                    <h4 class="os-sig">V°B° JEFE SECC. TECNICA</h4>
                 </div>
             </div>
         </div>
