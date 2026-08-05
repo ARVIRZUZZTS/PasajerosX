@@ -264,12 +264,12 @@ window.onload = () => {
         onPlacaSelect(this.value.trim());
     });
 
-    document.querySelectorAll('#step2 input').forEach(input => {
+    const inputs = document.querySelectorAll('#step2 input');
+    inputs.forEach((input, i) => {
         input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                setTimeout(() => save(), 0);
-            }
+            if (e.key !== 'Enter') return;
+            e.preventDefault();
+            (inputs[i + 1] || document.getElementById('save')).focus();
         });
-    });
+    });    
 };

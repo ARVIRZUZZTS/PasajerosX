@@ -1,10 +1,8 @@
-﻿const conductorLicenciaMap = new Map();
+﻿const choferesMap = {};
 
-// Obtener codR desde la URL
 const params = new URLSearchParams(window.location.search);
 const codR = params.get('codR');
 
-// Volver a ver.html con el mismo codR
 function back() {
     const fecha = document.getElementById('fe').value || params.get('fecha');
     window.location.href = `ver.html?codR=${codR}&fecha=${encodeURIComponent(fecha)}`;
@@ -41,18 +39,16 @@ function getReporte() {
 async function loadDatalists() {
     try {
         console.time('Carga completa');
-        
-        const response = await fetch('php/common/getList.php');
-        if (!response.ok) throw new Error('Error en la respuesta del servidor');
-        const lists = await response.json();
 
-        if (lists.conLic?.length) {
-            lists.conLic.forEach(pair => {
-                const [conductor, licencia] = pair.split('&');
-                if (conductor && licencia) {
-                    conductorLicenciaMap.set(conductor.trim(), licencia.trim());
-                }
-            });
+        // Cargar choferes desde la tabla chofer (única fuente para conductores)
+        const choferRes = await fetch('php/chofer/getChofer.php');
+        if (choferRes.ok) {
+            const choferes = await choferRes.json();
+            if (choferes?.length) {
+                choferes.forEach(c => {
+                    if (c.nombre_chofer) choferesMap[c.nombre_chofer] = c;
+                });
+            }
         }
 
         const fillDatalist = (id, items) => {
@@ -68,36 +64,35 @@ async function loadDatalists() {
             datalist.appendChild(fragment);
         };
 
-        let choferNombres = [];
-        try {
-            const choferRes = await fetch('php/chofer/getChofer.php');
-            if (choferRes.ok) {
-                const choferes = await choferRes.json();
-                if (choferes?.length) {
-                    choferNombres = choferes.map(c => c.nombre_chofer);
-                }
-            }
-        } catch (e) {}
+        // Conductores y licencias SOLO desde la tabla chofer
+        const choferNombres = Object.keys(choferesMap);
+        const choferLicencias = [...new Set(Object.values(choferesMap).map(c => c.licencia).filter(Boolean))];
 
-        const condNames = [...new Set([...(lists.c1 || []), ...(lists.c2 || []), ...choferNombres])];
-        fillDatalist('c1-list', condNames);
-        fillDatalist('c2-list', condNames);
+        fillDatalist('c1-list', choferNombres);
+        fillDatalist('c2-list', choferNombres);
+        fillDatalist('l1-list', choferLicencias);
+        fillDatalist('l2-list', choferLicencias);
+
+        const response = await fetch('php/common/getList.php');
+        if (!response.ok) throw new Error('Error en la respuesta del servidor');
+        const lists = await response.json();
 
         for (const [key, values] of Object.entries(lists)) {
-            if (['conLic', 'c1', 'c2', 'planillasCompletas'].includes(key)) continue;
+            if (['conLic', 'c1', 'l1', 'c2', 'l2', 'planillasCompletas'].includes(key)) continue;
             fillDatalist(`${key}-list`, values);
         }
         console.timeEnd('Llenar datalists');
 
         console.time('Configurar eventos');
-        
+
         const setupConductorLicencia = (conductorId, licenciaId) => {
             const conductorInput = document.getElementById(conductorId);
             const licenciaInput = document.getElementById(licenciaId);
             if (!conductorInput || !licenciaInput) return;
             const updateLicencia = () => {
-                const valor = conductorInput.value.trim();
-                licenciaInput.value = conductorLicenciaMap.get(valor) || '';
+                const nombre = conductorInput.value.trim();
+                const chofer = choferesMap[nombre];
+                licenciaInput.value = chofer?.licencia || '';
             };
             conductorInput.addEventListener('input', updateLicencia);
             conductorInput.addEventListener('change', updateLicencia);
@@ -107,10 +102,9 @@ async function loadDatalists() {
         setupConductorLicencia('c2', 'l2');
 
         setupPlacaAutocomplete();
-        setupChoferAutocomplete();
         console.timeEnd('Configurar eventos');
         console.timeEnd('Carga completa');
-        
+
     } catch (error) {
         console.error("Error crítico:", error);
         alert("Error al cargar datos. Por favor recarga la página.");
@@ -141,42 +135,14 @@ function setupPlacaAutocomplete() {
     });
 }
 
-function setupChoferAutocomplete() {
-    const choferMap = new Map();
-    fetch('php/chofer/getChofer.php')
-        .then(r => r.json())
-        .then(choferes => {
-            if (choferes?.length) {
-                choferes.forEach(c => choferMap.set(c.nombre_chofer, c.licencia));
-            }
-        });
-
-    const setup = (conductorId, licenciaId) => {
-        const condInput = document.getElementById(conductorId);
-        const licInput = document.getElementById(licenciaId);
-        if (!condInput || !licInput) return;
-        condInput.addEventListener('change', () => {
-            const nombre = condInput.value.trim();
-            const licencia = choferMap.get(nombre);
-            if (licencia) licInput.value = licencia;
-        });
-    };
-    setup('c1', 'l1');
-    setup('c2', 'l2');
-}
-
 const getVal = (id) => {
     const el = document.getElementById(id);
     return el.value.trim() || el.placeholder.trim();
 };
 
 async function save() {
-
-    // Primero verificar asientos ocupados
     const asientosOcupados = await getAsientosOcupados();
     
-    
-    // Verificar si hay asientos duplicados en los inputs
     const pasajerosInputs = document.querySelectorAll('#dinamic .pasajero');
     let asientosDuplicados = [];
     let asientosInvalidos = [];
@@ -185,12 +151,10 @@ async function save() {
         const asientoInput = div.querySelector('.as');
         const asiento = asientoInput.value.trim() || asientoInput.placeholder;
         
-        // Verificar si el asiento está ocupado
         if (asientosOcupados.includes(asiento.toString()) && asientoInput.value.trim() !== '') {
             asientosInvalidos.push(asiento);
         }
         
-        // Verificar duplicados entre los inputs
         pasajerosInputs.forEach(otherDiv => {
             if (div !== otherDiv) {
                 const otherAsientoInput = otherDiv.querySelector('.as');
@@ -202,11 +166,9 @@ async function save() {
         });
     });
     
-    // Eliminar duplicados en los arrays
     asientosDuplicados = [...new Set(asientosDuplicados)];
     asientosInvalidos = [...new Set(asientosInvalidos)];
     
-    // Mostrar alertas si hay problemas
     if (asientosDuplicados.length > 0 || asientosInvalidos.length > 0) {
         let mensaje = '';
         
@@ -220,12 +182,9 @@ async function save() {
         }
         
         alert(mensaje);
-        return; // Detener el guardado
+        return;
     }
-    
-    // Continuar con el guardado si no hay problemas
     guardarDatos();
-    reload();
 }
 
 async function getAsientosOcupados() {
@@ -306,7 +265,6 @@ async function guardarDatos() {
             }
         });
 
-        // Primero borramos los pasajeros marcados con 0
         if (pasajerosBorrar.length > 0) {
             const deleteResponse = await fetch('php/editar/deletePasajero.php', {
                 method: 'POST',
@@ -336,7 +294,7 @@ async function guardarDatos() {
             }
         }
 
-        location.reload();
+        window.location.href = `ver.html?codR=${codR}&fecha=${encodeURIComponent(fecha)}`;
         
     } catch (error) {
         console.error('Error en guardarDatos:', error);
