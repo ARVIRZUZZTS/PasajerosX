@@ -28,9 +28,10 @@ async function cargarBusesDiarios() {
         
         const listaElement = document.getElementById('lista');
         listaElement.innerHTML = '';
-        
+        listaElement.classList.toggle('is-empty', buses.length === 0);
+
         if (buses.length === 0) {
-            listaElement.innerHTML = '<h3 style="text-align: center; width: 100%;">No hay buses registrados para esta fecha</h3>';
+            listaElement.innerHTML = '<div class="empty-state"><h3>No hay buses registrados para esta fecha</h3></div>';
             return;
         }
         
@@ -73,7 +74,9 @@ async function cargarBusesDiarios() {
         }
     } catch (error) {
         console.error('Error al cargar los buses:', error);
-        document.getElementById('lista').innerHTML = '<h3 style="text-align: center; width: 100%; color: #f00;">Error al cargar los buses</h3>';
+        const listaEl = document.getElementById('lista');
+        listaEl.classList.add('is-empty');
+        listaEl.innerHTML = '<div class="empty-state"><h3 style="color: #f00;">Error al cargar los buses</h3></div>';
     }
 }
 

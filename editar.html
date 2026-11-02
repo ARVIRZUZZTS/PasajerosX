@@ -1,35 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>EDITAR INFORMACION DEL VIAJE</title>
     <link rel="stylesheet" href="css/editar.css">
-</head>
+<link rel="stylesheet" href="css/layout2.css"></head>
 <body>
-    <header>
-        <img src="img/logoX.png" alt="Logo">       
-        <div>
-            <h1>EDITAR INFORMACION DEL VIAJE</h1>
-            <h3 id="fecha"></h3>
-            <h3 id="hora"></h3>
-        </div>
-    </header>
+    <div id="app-header"></div>
 
-    <main>
-        <div id="botones">
-            <div class="bot">
-            <button id="save" onclick="save()">
-                <span class="emoji">💾</span>
-                <span>GUARDAR</span>
-            </button>
-            </div>
-            <div class="bot">
-            <button id="back" onclick="back()">
-                <span class="emoji">⬅️</span>
-                <span>ATRAS</span>
-            </button>
-            </div>
-        </div>
+    <div class="flex">
+        <div id="app-sidebar"></div>
+        <main>
+
         <div id="superBus">
             <div id="bus"></div>
         </div>
@@ -125,7 +107,17 @@
             </div>
         </div>
     </main>
+    </div>
+    </div>
 
+    <script>
+        window.PAGE_TITLE = "EDITAR INFORMACION DEL VIAJE";
+        window.PAGE_BUTTONS = [
+            { id: "save", emoji: "\ud83d\udcbe", label: "GUARDAR", onclick: "save()" },
+            { id: "back", emoji: "\u2b05", label: "ATRAS", onclick: "back()" }
+        ];
+    </script>
+    <script src="components/layout.js"></script>
     <script src="js/editar.js"></script>
 </body>
 </html>

@@ -4,63 +4,45 @@
     <meta charset="UTF-8">
     <title>VENTA DIARIA</title>
     <link rel="stylesheet" href="css/diario.css">    
-</head>
+<link rel="stylesheet" href="css/layout2.css"></head>
 <body>
-    <header>
-        <img src="img/logoX.png" alt="Logo">
-        <div>
-            <h3 id="tota">TOTAL: 0BS</h3>
-            <h1>VENTA DIARIA</h1>
-            <h3 id="fecha"></h3>
-            <h3 id="hora"></h3>
-        </div>      
-    </header>
+    <div id="app-header"></div>
 
-    <main>
-        <div id="botones">
-            <div class="bot">
-            <button id="crear" onclick="crear()">
-                <span class="emoji">➕</span>
-                <span>PASAJERO</span>
-            </button>
-            </div>
-            <div class="bot">
-            <button id="new" onclick="printy(0)">
-                <span class="emoji">📄</span>
-                <span>VACIO</span>
-            </button>
-            </div>
-            <div class="bot">
-            <button id="back" onclick="back()">
-                <span class="emoji">⬅️</span>
-                <span>ATRAS</span>
-            </button>
-            </div>
-            <div class="bot">
-            <button id="buses" onclick="buses()">
-                <span class="emoji">🚌</span>
-                <span>BUSES</span>
-            </button>
-            </div>
-        </div>
+    <div class="flex">
+        <div id="app-sidebar"></div>
+        <main>
 
-        <div id="lista">
-            <div id="title">
-                <h2 id="hrp">REPORTE</h2>
-                <h2 id="hsv">GUARDAR</h2>
-                <h2 id="hnm">NOMBRE</h2>
-                <h2 id="hci">CI</h2>
-                <h2 id="hdt">DESTINO</h2>
-                <h2 id="has">ASIENTO</h2>
-                <h2 id="hpr">TOTAL</h2>
-                <h2 id="him">IMPRIMIR</h2>
-            </div>
-            <div id="dinamic"></div>
-        </div>
+        <table id="lista">
+            <thead id="title">
+                <tr>
+                    <th id="hrp">REPORTE</th>
+                    <th id="hsv">GUARDAR</th>
+                    <th id="hnm">NOMBRE</th>
+                    <th id="hci">CI</th>
+                    <th id="hdt">DESTINO</th>
+                    <th id="has">ASIENTO</th>
+                    <th id="hpr">TOTAL</th>
+                    <th id="him">IMPRIMIR</th>
+                </tr>
+            </thead>
+            <tbody id="dinamic"></tbody>
+        </table>
     </main>
+    </div>
+    </div>
     
     <div id="printP"></div>
 
+    <script>
+        window.PAGE_TITLE = "VENTA DIARIA";
+        window.PAGE_BUTTONS = [
+            { id: "crear", emoji: "\u2795", label: "PASAJERO", onclick: "crear()" },
+            { id: "new", emoji: "\ud83d\udcc4", label: "VACIO", onclick: "printy(0)" },
+            { id: "back", emoji: "\u2b05", label: "ATRAS", onclick: "back()" },
+            { id: "buses", emoji: "\ud83d\ude8c", label: "BUSES", onclick: "buses()" }
+        ];
+    </script>
+    <script src="components/layout.js"></script>
     <script src="js/diario.js"></script>
 </body>
 </html>

@@ -53,10 +53,13 @@ function getDiarios() {
             const contenedor = document.getElementById("dinamic");
             contenedor.innerHTML = ""; // Limpiar antes
             if (data.length === 0) {
-                const mensaje = document.createElement('h2');
-                mensaje.textContent = 'NO HAY PASAJEROS REGISTRADOS';
-                mensaje.style.textAlign = 'center'; // opcional: centrar texto
-                contenedor.appendChild(mensaje);
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.colSpan = 8;
+                td.textContent = 'NO HAY PASAJEROS REGISTRADOS';
+                td.style.textAlign = 'center';
+                tr.appendChild(td);
+                contenedor.appendChild(tr);
                 return; // detener ejecución si no hay pasajeros
             }
 
@@ -64,9 +67,9 @@ function getDiarios() {
                 .then(res => res.json())
                 .then(reportes => {
                     data.forEach(p => {
-                        const div = document.createElement("div");
-                        div.classList.add("reporte");
-                        div.id = `pasajero-${p.codP}`;
+                        const tr = document.createElement("tr");
+                        tr.id = `pasajero-${p.codP}`;
+                        tr.classList.add("reporte");
                         // Generar opciones del datalist desde PHP
                         const opciones = reportes.map(r => `<option value="Reporte ${r.codR}_${r.placa}"></option>`).join("");
                         let codsitoR = "Elegir reporte";
@@ -78,23 +81,23 @@ function getDiarios() {
                                 codsitoR = `Reporte ${p.codR}_???`; 
                             }
                         }
-                        div.innerHTML = `
-                            <input class="dl" list="reportes-${p.codP}" id="input-reporte-${p.codP}" placeholder="${codsitoR}">
-                            <datalist id="reportes-${p.codP}">
-                                ${opciones}
-                            </datalist>
-                            <button class="sv" onclick="guarda(${p.codP})">GUARDAR</button>
-
-                            <h2 class="nm">${p.nombre}</h2>
-                            <h2 class="ci">${p.ci}</h2>
-                            <h2 class="dt">${p.destino}</h2>
-                            <h2 class="as">${p.asiento}</h2>
-                            <h2 class="pr">${p.precio}</h2>
-
-                            <button class="im" onclick="printy(${p.codP})"><img src="img/printW.png"></button>
+                        tr.innerHTML = `
+                            <td>
+                                <input class="dl" list="reportes-${p.codP}" id="input-reporte-${p.codP}" placeholder="${codsitoR}">
+                                <datalist id="reportes-${p.codP}">
+                                    ${opciones}
+                                </datalist>
+                            </td>
+                            <td><button class="sv" onclick="guarda(${p.codP})">GUARDAR</button></td>
+                            <td class="nm">${p.nombre}</td>
+                            <td class="ci">${p.ci}</td>
+                            <td class="dt">${p.destino}</td>
+                            <td class="as">${p.asiento}</td>
+                            <td class="pr">${p.precio}</td>
+                            <td><button class="im" onclick="printy(${p.codP})"><img src="img/printW.png"></button></td>
                         `;
                         totalT += p.precio;
-                        contenedor.appendChild(div);
+                        contenedor.appendChild(tr);
                     });
                     document.getElementById("tota").textContent = "Total: " + totalT.toFixed(2);
                 })

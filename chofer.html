@@ -4,38 +4,25 @@
     <meta charset="UTF-8">
     <title>ADMINISTRAR CHOFERES</title>
     <link rel="stylesheet" href="css/flota.css">
-</head>
+<link rel="stylesheet" href="css/layout2.css"></head>
 <body>
-    <header>
-        <img src="img/logoX.png" alt="Logo">
-        <div>
-            <h1>ADMINISTRAR CHOFERES</h1>
-            <h3 id="fecha"></h3>
-            <h3 id="hora"></h3>
-        </div>
-    </header>
+    <div id="app-header"></div>
 
-    <main>
-        <div id="botones">
-            <div class="bot">
-                <button id="chofer" onclick="mostrarForm()">
-                    <span class="emoji">👤</span>
-                    <span>NUEVO</span>
-                </button>
-            </div>
-            <div class="bot">
-                <button id="back" onclick="back()">
-                    <span class="emoji">⬅️</span>
-                    <span>ATRAS</span>
-                </button>
-            </div>
-        </div>
+    <div class="flex">
+        <div id="app-sidebar"></div>
+        <main>
 
         <div id="formFlota" style="display:none;">
             <h2 id="formTitle">NUEVO CHOFER</h2>
             <input type="hidden" id="editOriginal">
-            <input type="text" id="nombre_chofer" placeholder="NOMBRE">
-            <input type="text" id="licencia" placeholder="LICENCIA">
+            <div class="field-group">
+                <label>NOMBRE</label>
+                <input type="text" id="nombre_chofer" placeholder="NOMBRE">
+            </div>
+            <div class="field-group">
+                <label>LICENCIA</label>
+                <input type="text" id="licencia" placeholder="LICENCIA">
+            </div>
             <div class="formButtons">
                 <button id="guardarFlota" onclick="guardarChofer()">GUARDAR</button>
                 <button id="cancelarFlota" onclick="cancelarForm()">CANCELAR</button>
@@ -44,7 +31,17 @@
 
         <div id="lista"></div>
     </main>
+    </div>
+    </div>
 
+    <script>
+        window.PAGE_TITLE = "ADMINISTRAR CHOFERES";
+        window.PAGE_BUTTONS = [
+            { id: "chofer", emoji: "\ud83d\udc64", label: "NUEVO", onclick: "mostrarForm()" },
+            { id: "back", emoji: "\u2b05", label: "ATRAS", onclick: "back()" }
+        ];
+    </script>
+    <script src="components/layout.js"></script>
     <script src="js/chofer.js"></script>
 </body>
 </html>

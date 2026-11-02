@@ -77,7 +77,6 @@ function resetPlaca() {
     document.getElementById('pl-display').value = '';
     document.getElementById('pl-display').placeholder = '';
     document.getElementById('propietario').value = '';
-    document.getElementById('marca').value = '';
     document.getElementById('c1').value = '';
     document.getElementById('c1').placeholder = '';
     document.getElementById('l1').value = '';
@@ -109,7 +108,6 @@ async function onPlacaSelect(placa) {
         document.getElementById('pl-display').value = '';
         document.getElementById('pl-display').placeholder = placa;
         document.getElementById('propietario').value = flota.propietario || '';
-        document.getElementById('marca').value = flota.marca || '';
         document.getElementById('c1').value = '';
         document.getElementById('c1').placeholder = flota.conductor1 || '';
         document.getElementById('l1').value = '';

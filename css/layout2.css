@@ -1,0 +1,199 @@
+/* layout2.css - estilo side_bar_2 aplicado, sidebar fijo a la izquierda */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-image: url('../img/f1.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    color: #111827;
+    margin: 0;
+    position: relative;
+}
+
+/* Mantener el fondo original borroso */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: inherit;
+    background-size: inherit;
+    background-repeat: inherit;
+    background-position: inherit;
+    filter: blur(8px);
+    z-index: -1;
+    display: block !important;
+}
+
+header {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 0 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    margin: 0 !important;
+    padding: 1vh 2vw !important;
+    display: flex;
+    justify-content: space-between;
+}
+header div {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+}
+/* Quitar padding interno de los elementos del header */
+header img,
+header h1,
+header h3,
+header div {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+header img { height: 5vh; }
+#botones { height: 93vh; }
+main { height: 93vh;}
+
+#botones,
+.botones {
+    box-sizing: border-box;
+    border-radius: 0 !important;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #727a8b !important;
+    width: 10vw !important;
+    min-width: 10vw !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    padding: 2vh 1vw !important;
+    gap: 1vh !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    margin-left: 0 !important;
+}
+
+main {
+    box-sizing: border-box;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 2vh 1vw;
+    display: flex !important;
+    gap: 2vw !important;
+    background: transparent !important;
+}
+
+.bot button {
+    height: 44px !important;
+    width: 100%;
+    border-radius: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    padding: 0 8px !important;
+    transition: box-shadow 0.2s ease !important;
+    font-weight: bolder;
+    border: 0;
+    border-left: 3px solid rgba(0, 0, 0, 0.2) !important;
+    /* pastel base */
+    background-color: #e5e7eb !important;
+    color: #111827 !important;;
+}
+
+/* Hover: tono mas oscuro sin afectar emojis */
+.bot button:hover {
+    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.10) !important;
+    filter: none !important;
+}
+
+/* Paleta pastel por grupos de botones */
+.bot button[id*="save"],
+.bot button[id*="guardar"],
+.bot button[id*="sav"],
+.bot button[id*="crear"],
+.bot button[id*="add"] {
+    background-color: #b7e4c7 !important;
+    color: #14532d !important;
+}
+
+.bot button[id*="back"],
+.bot button[id*="cancel"],
+.bot button[id*="del"] {
+    background-color: #f8c8c8 !important;
+    color: #7f1d1d !important;
+}
+
+.bot button[id*="print"],
+.bot button[id*="deta"],
+.bot button[id*="orden"] {
+    background-color: #e9d5ff !important;
+    color: #581c87 !important;
+}
+
+.bot button[id*="edit"] {
+    background-color: #cfe2ff !important;
+    color: #1e3a8a !important;
+}
+
+.bot button[id*="asiento"],
+.bot button[id*="puerta"],
+.bot button[id*="banio"],
+.bot button[id*="tv"],
+.bot button[id*="piso"],
+.bot button[id*="reset"] {
+    background-color: #c7f0e8 !important;
+    color: #134e4a !important;
+}
+
+.bot button[id*="flota"],
+.bot button[id*="chofer"],
+.bot button[id*="diario"],
+.bot button[id*="marca"],
+.bot button[id*="buses"] {
+    background-color: #cfe2ff !important;
+    color: #1e3a8a !important;
+}
+
+/* Emojis visibles y sin recorte */
+.bot button .emoji {
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif !important;
+    min-width: 24px !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+    filter: none !important;
+}
+
+/* Asientos: colores mas intensos para elementos */
+#options {
+    background: #f1f8e9 !important;
+    border-radius: 8px !important;
+    padding: 2vh 1vw !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
+}
+.biAsi, .biPue, .biBan, .biTv {
+    background: #e8f5e9 !important;
+    border-radius: 4px !important;
+}
+.bot button#asiento { background-color: #4caf50 !important; color: #fff !important; }
+.bot button#puerta { background-color: #29b6f6 !important; color: #fff !important; }
+.bot button#banio { background-color: #1e88e5 !important; color: #fff !important; }
+.bot button#tv { background-color: #ff9800 !important; color: #fff !important; }
+.bot button#piso2 { background-color: #81c784 !important; color: #fff !important; }
+#sav {
+    background-color: #4caf50 !important;
+    color: #fff !important;
+    padding: 8px 0 !important;
+    border: 1px solid #fff !important;
+    border-radius: 5px !important;
+    width: 100% !important;
+}
+.bot button#back { width: 100% !important; }
+.flex { display: flex; }
+#bus, .bus {
+    zoom: var(--bus-scale, 1);
+    transform-origin: top center;
+}
+@supports not (zoom: 1) {
+    #bus, .bus {
+        transform: scale(var(--bus-scale, 1));
+    }
+}

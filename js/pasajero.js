@@ -287,7 +287,7 @@ async function cargarDisenoBus(placa) {
         if (placa === "n") {
             const noPlacaDiv = document.createElement('div');
             noPlacaDiv.className = 'noMarca';
-            noPlacaDiv.textContent = 'SIN BUS SELECCIONADO';
+            noPlacaDiv.textContent = 'no hay bus asignado';
             busElement.appendChild(noPlacaDiv);
         }
         

@@ -2,6 +2,7 @@
 const codR = params.get('codR');
 var total = 0;
 window.onload = () => {
+    renderEntradas();
     obtenerDatosReporte(codR);
     obtenerPasajeros(codR);
     actualizarFechaHoraFooter();
@@ -30,6 +31,49 @@ function add(asiento) {
     const as = encodeURIComponent(asiento);
     const hh = encodeURIComponent(document.getElementById('hr').textContent.trim());
     window.location.href = `pasajero.html?fecha=${fecha}&codR=${codR}&c1=${c1}&pl=${pl}&placa=${placa}&fe=${fe}&dt=${dt}&as=${as}&hh=${hh}`;
+}
+
+function renderEntradas() {
+    const cont = document.getElementById('entradas');
+    if (!cont) return;
+    cont.innerHTML = '';
+
+    const col1 = document.createElement('div');
+    const col2 = document.createElement('div');
+
+    const fields = [
+        { label: 'PROPIETARIO:', id: 'propietario', col: 1 },
+        { label: 'CONDUCTOR 1:', id: 'c1', col: 1 },
+        { label: 'CONDUCTOR 2:', id: 'c2', col: 1 },
+        { label: 'AYUDANTE:', id: 'ay', col: 1 },
+        { label: 'PLACA:', id: 'pl', col: 1 },
+        { label: 'FECHA:', id: 'fe', col: 1 },
+        { label: 'MARCA:', id: 'marca', col: 2 },
+        { label: 'LICENCIA 1:', id: 'l1', col: 2 },
+        { label: 'LICENCIA 2:', id: 'l2', col: 2 },
+        { label: 'DESTINO:', id: 'dt', col: 2 },
+        { label: 'PLANILLA:', id: 'placa', col: 2 },
+        { label: 'HORA:', id: 'hr', col: 2 },
+        { label: 'CARRIL:', id: 'ca', col: 2 }
+    ];
+
+    fields.forEach(f => {
+        const row = document.createElement('div');
+        const label = document.createElement('span');
+        label.className = 'label';
+        label.textContent = f.label;
+        const value = document.createElement('span');
+        value.className = 'value';
+        value.id = f.id;
+        value.textContent = '-';
+        row.appendChild(label);
+        row.appendChild(value);
+        if (f.col === 1) col1.appendChild(row);
+        else col2.appendChild(row);
+    });
+
+    cont.appendChild(col1);
+    cont.appendChild(col2);
 }
 
 function obtenerDatosReporte(codR) {
@@ -96,19 +140,19 @@ function obtenerPasajeros(codR) {
                     const div = document.createElement('div');
                     div.classList.add('pasajero');
 
-                    const h3Sit = document.createElement('h3');
+                    const h3Sit = document.createElement('label');
                     h3Sit.textContent = pasajero.asiento;
                     h3Sit.classList.add('as');
 
-                    const h3Nombre = document.createElement('h3');
+                    const h3Nombre = document.createElement('label');
                     h3Nombre.textContent = pasajero.nombre;
                     h3Nombre.classList.add('nm');
 
-                    const h3Ci = document.createElement('h3');
+                    const h3Ci = document.createElement('label');
                     h3Ci.textContent = pasajero.ci;
                     h3Ci.classList.add('ci');
 
-                    const h3Pr = document.createElement('h3');
+                    const h3Pr = document.createElement('label');
                     h3Pr.textContent = pasajero.precio;
                     h3Pr.classList.add('pr');
 
@@ -130,7 +174,8 @@ function obtenerPasajeros(codR) {
                     contenedor.appendChild(div);
                 });
             }
-            document.getElementById("total").textContent = total + " Bs";
+            const totalEl = document.getElementById("total");
+            if (totalEl) totalEl.textContent = total + " Bs";
         })
         .catch(error => {
             console.error('Error al obtener los pasajeros:', error);
