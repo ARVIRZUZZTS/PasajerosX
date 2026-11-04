@@ -27,7 +27,6 @@ function getReporte() {
                     .then(flota => {
                         document.getElementById('planilla').value = flota?.nombre_planilla || '';
                         document.getElementById('propietario').value = flota?.propietario || '';
-                        document.getElementById('marca').value = flota?.marca || '';
                     })
                     .catch(() => {});
                 cargarDisenoBus(data.placa);
@@ -123,7 +122,6 @@ function setupPlacaAutocomplete() {
             if (flota && !flota.error) {
                 document.getElementById('planilla').value = flota.nombre_planilla || '';
                 document.getElementById('propietario').value = flota.propietario || '';
-                document.getElementById('marca').value = flota.marca || '';
                 document.getElementById('c1').placeholder = flota.conductor1 || '';
                 document.getElementById('l1').placeholder = flota.licencia1 || '';
                 document.getElementById('c2').placeholder = flota.conductor2 || '';

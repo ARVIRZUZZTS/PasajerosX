@@ -21,13 +21,15 @@ function diario() {
     const fechaParam = params.get("fecha");
     const fecha = decodeURIComponent(fechaParam);
     console.log(fecha);
-    document.getElementById('fecha').textContent  = "FECHA SELECCIONADA: " + fecha;
+    const fechaEl = document.getElementById('fecha');
+    if (fechaEl) fechaEl.textContent = "FECHA SELECCIONADA: " + fecha;
 }
 
 function actualizarFechaHora() {
     const ahora = new Date();
     const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-    document.getElementById('hora').textContent = ahora.toLocaleTimeString('es-ES', opcionesHora);
+    const horaEl = document.getElementById('hora');
+    if (horaEl) horaEl.textContent = ahora.toLocaleTimeString('es-ES', opcionesHora);
 }
 setInterval(actualizarFechaHora, 1000);
 actualizarFechaHora();
@@ -55,7 +57,7 @@ function getDiarios() {
             if (data.length === 0) {
                 const tr = document.createElement('tr');
                 const td = document.createElement('td');
-                td.colSpan = 8;
+                td.colSpan = 7;
                 td.textContent = 'NO HAY PASAJEROS REGISTRADOS';
                 td.style.textAlign = 'center';
                 tr.appendChild(td);
@@ -63,52 +65,29 @@ function getDiarios() {
                 return; // detener ejecución si no hay pasajeros
             }
 
-            fetch(`php/diario/obtenerReportesDiarios.php?fecha=${encodeURIComponent(fechaDecodificada)}`)
-                .then(res => res.json())
-                .then(reportes => {
-                    data.forEach(p => {
-                        const tr = document.createElement("tr");
-                        tr.id = `pasajero-${p.codP}`;
-                        tr.classList.add("reporte");
-                        // Generar opciones del datalist desde PHP
-                        const opciones = reportes.map(r => `<option value="Reporte ${r.codR}_${r.placa}"></option>`).join("");
-                        let codsitoR = "Elegir reporte";
-                        if (p.codR != null) {
-                            const reporteAsignado = reportes.find(r => r.codR === p.codR);
-                            if (reporteAsignado) {
-                                codsitoR = `Reporte ${reporteAsignado.codR}_${reporteAsignado.placa}`;
-                            } else {
-                                codsitoR = `Reporte ${p.codR}_???`; 
-                            }
-                        }
-                        tr.innerHTML = `
-                            <td>
-                                <input class="dl" list="reportes-${p.codP}" id="input-reporte-${p.codP}" placeholder="${codsitoR}">
-                                <datalist id="reportes-${p.codP}">
-                                    ${opciones}
-                                </datalist>
-                            </td>
-                            <td><button class="sv" onclick="guarda(${p.codP})">GUARDAR</button></td>
-                            <td class="nm">${p.nombre}</td>
-                            <td class="ci">${p.ci}</td>
-                            <td class="dt">${p.destino}</td>
-                            <td class="as">${p.asiento}</td>
-                            <td class="pr">${p.precio}</td>
-                            <td><button class="im" onclick="printy(${p.codP})"><img src="img/printW.png"></button></td>
-                        `;
-                        totalT += p.precio;
-                        contenedor.appendChild(tr);
-                    });
-                    document.getElementById("tota").textContent = "Total: " + totalT.toFixed(2);
-                })
-                .catch(err => {
-                    console.error("Error cargando reportes:", err);
-                    document.getElementById("tota").textContent = "Total: 0";
-                });
+            data.forEach(p => {
+                const tr = document.createElement("tr");
+                tr.id = `pasajero-${p.codP}`;
+                tr.classList.add("reporte");
+                tr.innerHTML = `
+                    <td class="dl">${p.codR ? `Reporte ${p.codR} - ${p.reportePlaca || ''}` : 'Sin reporte'}</td>
+                    <td class="nm">${p.nombre}</td>
+                    <td class="ci">${p.ci}</td>
+                    <td class="dt">${p.destino}</td>
+                    <td class="as">${p.asiento}</td>
+                    <td class="pr">${p.precio}</td>
+                    <td><button class="im" onclick="printy(${p.codP})"><img src="img/printW.png"></button></td>
+                `;
+                totalT += p.precio;
+                contenedor.appendChild(tr);
+            });
+            const totaEl = document.getElementById("tota");
+            if (totaEl) totaEl.textContent = "Total: " + totalT.toFixed(2);
         })
         .catch(error => {
             console.error("Error al cargar los diarios:", error);
-            document.getElementById("tota").textContent = "Total: 0";
+            const totaEl3 = document.getElementById("tota");
+            if (totaEl3) totaEl3.textContent = "Total: 0";
         });
 }
 

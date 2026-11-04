@@ -256,8 +256,10 @@ function hacerDraggable(el) {
 
         function mover(ev) {
             ev.preventDefault();
-            el.style.left = ev.clientX - offsetX - bus.getBoundingClientRect().left + 'px';
-            el.style.top = ev.clientY - offsetY - bus.getBoundingClientRect().top + 'px';
+            const busRect = bus.getBoundingClientRect();
+            const scale = busRect.width / 440 || 1;
+            el.style.left = (ev.clientX - offsetX - busRect.left) / scale + 'px';
+            el.style.top = (ev.clientY - offsetY - busRect.top) / scale + 'px';
         }
 
         function soltar() {

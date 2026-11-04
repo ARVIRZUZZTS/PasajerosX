@@ -1,14 +1,14 @@
 
 
 input {
-    padding: 10px;
+    padding: 6px;
     border: none;
     outline: none;
     font-size: 15px;
     border-radius: 5px;
     border: 1px solid black;
     width: 250px;
-    height: 30px;
+    height: 26px;
 }
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
@@ -46,24 +46,30 @@ input[type=number]::-webkit-outer-spin-button {
     font-size: large;
     background-color: rgb(255, 255, 255);
     border-radius: 5px;
+    padding-bottom: 1vh;
 }
-#top h1 {
+#top h2 {
     margin: auto;
-    padding: 10px 0px;
+    padding: 1vh 0px;
 }
-#entradas div, #ay{
+#entradas {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-around;
+    padding: 0px 50px;
+    gap: 40px;
 }
-#entradas div {
-    margin-bottom: 5px;
+#entradas > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
 }
-#entradas div div {
-    margin-bottom: 0px !important;
+#entradas .label {
+    font-weight: 700;
+    margin-right: 8px;
 }
-#entradas div div h3 {
-    margin: 0px;
+#entradas .value {
+    font-weight: 400;
 }
 #boxi {
     background-color: rgb(255, 255, 255);
@@ -74,6 +80,12 @@ input[type=number]::-webkit-outer-spin-button {
     display: flex;
     width: 95%;
     margin: auto;
+}
+#titleBoxi h4 {
+    text-align: center;
+    align-content: center;
+    margin-bottom: 0px;
+    height: 39px;
 }
 #tb1 { width: 15%; text-align: center; margin-right: 5%;}
 #tb2 { width: 35%; text-align: center; margin-right: 5%;}

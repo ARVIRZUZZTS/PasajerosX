@@ -47,3 +47,14 @@
 
     window.dispatchEvent(new Event('app:ready'));
 })();
+
+// Escalado responsive de #bus / .bus segun altura de pantalla
+(function () {
+    function updateBusScale() {
+        const h = window.innerHeight || 700;
+        const scale = Math.min(1, Math.max(0.5, (h - 120) / 700));
+        document.documentElement.style.setProperty('--bus-scale', scale);
+    }
+    window.addEventListener('resize', updateBusScale);
+    updateBusScale();
+})();

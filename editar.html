@@ -16,91 +16,81 @@
             <div id="bus"></div>
         </div>
         <div id="lista">
-            <div id="top">
-                <h1>DATOS DEL VIAJE</h1>
-                <div id="entradas">
-                    <div>
-                        <div>
-                            <h3 class="izq">PROPIETARIO: </h3>
-                            <input type="text" id="propietario" maxlength="150" placeholder="PROPIETARIO" readonly>
-                        </div>
-                        <div>
-                            <h3>MARCA: </h3>
-                            <input class="der" type="text" id="marca" maxlength="150" placeholder="MARCA" readonly>
-                        </div>
+                    <div id="top">
+            <h2 id="titleDat">DATOS DEL VIAJE</h2>
+            <div id="entradas">
+                <div>
+                    <div class="field">
+                        <label class="label" for="propietario">PROPIETARIO:</label>
+                        <input type="text" id="propietario" maxlength="150" placeholder="PROPIETARIO" readonly>
                     </div>
-                    <div>
-                        <div>
-                            <h3 class="izq">CONDUCTOR 1: </h3>
-                            <input type="text" id="c1" maxlength="150" placeholder="CONDUCTOR 1" name="c1" list="c1-list" autocomplete="off">
-                            <datalist id="c1-list"></datalist>
-                        </div>
-                        <div>
-                            <h3>LICENCIA 1: </h3>
-                            <input class="der" type="text" id="l1" maxlength="20" placeholder="LICENCIA 1" name="l1" list="l1-list" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                            <datalist id="l1-list"></datalist>
-                        </div>
+                    <div class="field">
+                        <label class="label" for="c1">CONDUCTOR 1:</label>
+                        <input type="text" id="c1" maxlength="150" placeholder="CONDUCTOR 1" name="c1" list="c1-list" autocomplete="off">
+                        <datalist id="c1-list"></datalist>
                     </div>
-                    <div>
-                        <div>
-                            <h3 class="izq">CONDUCTOR 2: </h3>
-                            <input type="text" id="c2" maxlength="150" placeholder="CONDUCTOR 2" name="c2" list="c2-list" autocomplete="off">
-                            <datalist id="c2-list"></datalist>
-                        </div>
-                        <div>
-                            <h3>LICENCIA 2: </h3>
-                            <input class="der" type="text" id="l2" maxlength="20" placeholder="LICENCIA 2" name="l2" list="l2-list" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                            <datalist id="l2-list"></datalist>
-                        </div>
+                    <div class="field">
+                        <label class="label" for="c2">CONDUCTOR 2:</label>
+                        <input type="text" id="c2" maxlength="150" placeholder="CONDUCTOR 2" name="c2" list="c2-list" autocomplete="off">
+                        <datalist id="c2-list"></datalist>
                     </div>
-                    <div>
-                        <div>
-                            <h3 class="izq">AYUDANTE: </h3>
-                            <input type="text" id="ay" maxlength="150" placeholder="AYUDANTE" name="ay" list="ay-list" autocomplete="off">
-                            <datalist id="ay-list"></datalist>
-                        </div>
-                        <div>
-                            <h3>DESTINO: </h3>
-                            <input class="der" type="text" id="dt" maxlength="20" placeholder="DESTINO" name="dt" list="dt-list" autocomplete="off">
-                            <datalist id="dt-list">
-                                <option value="Cochabamba">
-                                <option value="La Paz">
-                            </datalist>
-                        </div>
+                    <div class="field">
+                        <label class="label" for="ay">AYUDANTE:</label>
+                        <input type="text" id="ay" maxlength="150" placeholder="AYUDANTE" name="ay" list="ay-list" autocomplete="off">
+                        <datalist id="ay-list"></datalist>
                     </div>
-                    <div>
-                        <div>
-                            <h3 class="izq">PLACA: </h3>
-                            <input type="text" id="pl" maxlength="20" placeholder="PLACA" name="pl" list="pl-list" autocomplete="off">
-                            <datalist id="pl-list"></datalist>
-                        </div>
-                        <div>
-                            <h3>PLANILLA:</h3>
-                            <input class="der" type="text" id="planilla" maxlength="150" placeholder="PLANILLA" name="planilla" readonly>
-                        </div>
+                    <div class="field">
+                        <label class="label" for="pl">PLACA:</label>
+                        <input type="text" id="pl" maxlength="20" placeholder="PLACA" name="pl" list="pl-list" autocomplete="off">
+                        <datalist id="pl-list"></datalist>
                     </div>
-                    <div>
-                        <div>
-                            <h3 class="izq">FECHA: </h3>
-                            <input type="text" id="fe" maxlength="10" placeholder="FECHA" name="fe">
-                        </div>
-                        <div>
-                            <h3>HORA: </h3>
-                            <input class="der" type="text" id="hr" maxlength="10" placeholder="HORA" name="hr" list="hr-list" autocomplete="off">
-                            <datalist id="hr-list"></datalist>
-                            <h3>CARRIL: </h3>
-                            <input class="der" type="text" id="ca" maxlength="10" placeholder="CARRIL" name="ca" list="ca-list" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                            <datalist id="ca-list"></datalist>
-                        </div>
+                    <div class="field">
+                        <label class="label" for="fe">FECHA:</label>
+                        <input type="text" id="fe" maxlength="10" placeholder="FECHA" name="fe">
+                    </div>
+                </div>
+                <div>
+                    <div class="field">
+                        <label class="label" for="l1">LICENCIA 1:</label>
+                        <input class="der" type="text" id="l1" maxlength="20" placeholder="LICENCIA 1" name="l1" list="l1-list" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <datalist id="l1-list"></datalist>
+                    </div>
+                    <div class="field">
+                        <label class="label" for="l2">LICENCIA 2:</label>
+                        <input class="der" type="text" id="l2" maxlength="20" placeholder="LICENCIA 2" name="l2" list="l2-list" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <datalist id="l2-list"></datalist>
+                    </div>
+                    <div class="field">
+                        <label class="label" for="dt">DESTINO:</label>
+                        <input class="der" type="text" id="dt" maxlength="20" placeholder="DESTINO" name="dt" list="dt-list" autocomplete="off">
+                        <datalist id="dt-list">
+                            <option value="Cochabamba">
+                            <option value="La Paz">
+                        </datalist>
+                    </div>
+                    <div class="field">
+                        <label class="label" for="planilla">PLANILLA:</label>
+                        <input class="der" type="text" id="planilla" maxlength="150" placeholder="PLANILLA" name="planilla" readonly>
+                    </div>
+                    <div class="field">
+                        <label class="label" for="hr">HORA:</label>
+                        <input class="der" type="text" id="hr" maxlength="10" placeholder="HORA" name="hr" list="hr-list" autocomplete="off">
+                        <datalist id="hr-list"></datalist>
+                    </div>
+                    <div class="field">
+                        <label class="label" for="ca">CARRIL:</label>
+                        <input class="der" type="text" id="ca" maxlength="10" placeholder="CARRIL" name="ca" list="ca-list" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <datalist id="ca-list"></datalist>
                     </div>
                 </div>
             </div>
-            <div id="boxi">
+        </div>
+        <div id="boxi">
                 <div id="titleBoxi">
-                    <h2 id="tb1">N°</h2>
-                    <h2 id="tb2">NOMBRE</h2>
-                    <h2 id="tb3">CI</h2>
-                    <h2 id="tb4">PRECIO</h2>
+                    <h4 id="tb1">N°</h4>
+                    <h4 id="tb2">NOMBRE</h4>
+                    <h4 id="tb3">CI</h4>
+                    <h4 id="tb4">PRECIO</h4>
                 </div>
                 <hr>
                 <div id="dinamic"></div>

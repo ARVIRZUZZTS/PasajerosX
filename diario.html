@@ -12,21 +12,22 @@
         <div id="app-sidebar"></div>
         <main>
 
-        <table id="lista">
-            <thead id="title">
-                <tr>
-                    <th id="hrp">REPORTE</th>
-                    <th id="hsv">GUARDAR</th>
-                    <th id="hnm">NOMBRE</th>
-                    <th id="hci">CI</th>
-                    <th id="hdt">DESTINO</th>
-                    <th id="has">ASIENTO</th>
-                    <th id="hpr">TOTAL</th>
-                    <th id="him">IMPRIMIR</th>
-                </tr>
-            </thead>
-            <tbody id="dinamic"></tbody>
-        </table>
+        <div class="table-wrap">
+            <table id="lista">
+                <thead id="title">
+                    <tr>
+                        <th id="hrp">REPORTE</th>
+                        <th id="hnm">NOMBRE</th>
+                        <th id="hci">CI</th>
+                        <th id="hdt">DESTINO</th>
+                        <th id="has">ASIENTO</th>
+                        <th id="hpr">TOTAL</th>
+                        <th id="him">IMPRIMIR</th>
+                    </tr>
+                </thead>
+                <tbody id="dinamic"></tbody>
+            </table>
+        </div>
     </main>
     </div>
     </div>
@@ -39,7 +40,6 @@
             { id: "crear", emoji: "\u2795", label: "PASAJERO", onclick: "crear()" },
             { id: "new", emoji: "\ud83d\udcc4", label: "VACIO", onclick: "printy(0)" },
             { id: "back", emoji: "\u2b05", label: "ATRAS", onclick: "back()" },
-            { id: "buses", emoji: "\ud83d\ude8c", label: "BUSES", onclick: "buses()" }
         ];
     </script>
     <script src="components/layout.js"></script>

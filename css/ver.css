@@ -164,6 +164,11 @@ input {
     width: 95%;
     margin: auto;
 }
+#titleBoxi h4 { 
+    text-align: center; 
+    align-content: center;
+    margin-bottom: 0px;
+}
 #tb1 { width: 10%; text-align: center; margin-right: 5%;}
 #tb2 { width: 30%; text-align: center; margin-right: 5%;}
 #tb3 { width: 20%; text-align: center; margin-right: 5%;}
@@ -471,4 +476,3 @@ input {
         width: 40%;
     }
 }
-

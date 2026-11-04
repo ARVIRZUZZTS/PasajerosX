@@ -101,6 +101,11 @@ function chofer() {
     window.location = "chofer.html";
 }
 
+function salidas() {
+    const fecha = encodeURIComponent(fechaSeleccionada);
+    window.location.href = `buses.html?fecha=${fecha}`;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const initialDate = devMode && localStorage.getItem(DEV_DATE_KEY)
         ? toFlatpickrDate(localStorage.getItem(DEV_DATE_KEY))
