@@ -39,6 +39,28 @@
 
     <div id="printReporte"></div>
     <div id="printPasajero"></div>
+
+    <div id="modalAsignacion" class="print-options-overlay" style="display:none;">
+        <div class="modal-card modal-asignacion">
+            <div class="modal-header">
+                <h3>Asignar asientos a boleteros</h3>
+                <button type="button" class="modal-close" id="modalAsigClose">&times;</button>
+            </div>
+            <div class="modal-body modal-asig-body">
+                <div class="modal-asig-left">
+                    <div id="seatMapAsignacion" class="seat-map-modal"></div>
+                </div>
+                <div class="modal-asig-right">
+                    <div id="boleterosPanel" class="boleteros-panel"></div>
+                    <div class="modal-count">Asignados: <span id="modalAsigCount">0</span></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="modalAsigCancel">Cancelar</button>
+                <button type="button" class="btn-confirm" id="modalAsigConfirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
     <script>
         window.PAGE_TITLE = "INFORMACION DEL VIAJE";
         window.PAGE_BUTTONS = [
@@ -48,6 +70,7 @@
             { id: "edit", emoji: "\u270f", label: "EDITAR", onclick: "edit()" },
             { id: "deta", emoji: "\ud83d\udccb", label: "DETALLE", onclick: "printy(-2)" },
             { id: "ordenSalida", emoji: "\ud83d\ude8c", label: "SALIDA", onclick: "printOrdenSalida()" },
+            { id: "asignar", emoji: "\ud83c\udfa8", label: "ASIGNAR", onclick: "abrirAsignacion()" },
             { id: "del", emoji: "\ud83d\uddd1", label: "ELIMINAR", onclick: "del()" }
         ];
     </script>

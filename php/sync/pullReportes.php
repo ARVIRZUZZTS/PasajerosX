@@ -7,7 +7,6 @@ header('Content-Type: application/json');
 
 $sucursal = (int)env('SUCURSAL', 1);
 
-// last sync
 $last = null;
 $r = mysqli_query($conexion, "SELECT last_sync FROM sync_state WHERE tabla='reportes' AND sucursal=$sucursal");
 if ($r && $row = mysqli_fetch_assoc($r)) $last = $row['last_sync'];
@@ -27,38 +26,27 @@ $maxUpdated = $last;
 foreach ($data as $row) {
     $localCod = (int)$row['local_codr'];
     if (!$localCod) continue;
-    $fecha = $row['fecha'] ? date('d/m/Y', strtotime($row['fecha'])) : '';
-    $asientos = implode(',', $row['asientos_reservados'] ?? []);
-    // check exists
-    $chk = $conexion->prepare("SELECT codR FROM reporte WHERE codR = ? OR (sucursal = ? AND local... )");
-    // simpler by codR
+    $fecha = $row['fecha'] ?? '';
+
     $chk = $conexion->prepare("SELECT codR FROM reporte WHERE codR = ?");
     $chk->bind_param("i", $localCod);
     $chk->execute();
     $exists = $chk->get_result()->num_rows > 0;
 
     if ($exists) {
-        $stmt = $conexion->prepare("UPDATE reporte SET con1=?,lic1=?,con2=?,lic2=?,ayudante=?,destino=?,placa=?,fecha=?,hora=?,carril=?,reservas=?,zona_reserva=?,asientos_reservados=?,sucursal=?,sincronizado=1,deleted=0,updated_at=NOW() WHERE codR=?");
-        $reservas = $row['reservas'] ? 1 : 0;
-        $stmt->bind_param("ssssssssssissii", $row['con1'],$row['lic1'],$row['con2'],$row['lic2'],$row['ayudante'],$row['destino'],$row['placa'],$fecha,$row['hora'],$row['carril'],$reservas,$row['zona_reserva'],$asientos,$sucursal,$localCod);
+        $stmt = $conexion->prepare("UPDATE reporte SET con1=?,lic1=?,con2=?,lic2=?,ayudante=?,destino=?,placa=?,fecha=?,hora=?,carril=?,sucursal=?,sincronizado=1,deleted=0,updated_at=NOW() WHERE codR=?");
+        $stmt->bind_param("ssssssssssii", $row['con1'],$row['lic1'],$row['con2'],$row['lic2'],$row['ayudante'],$row['destino'],$row['placa'],$fecha,$row['hora'],$row['carril'],$sucursal,$localCod);
         $stmt->execute();
     } else {
-        $stmt = $conexion->prepare("INSERT INTO reporte (codR,con1,lic1,con2,lic2,ayudante,destino,placa,fecha,hora,carril,reservas,zona_reserva,asientos_reservados,sucursal,sincronizado,deleted) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,0)");
-        $reservas = $row['reservas'] ? 1 : 0;
-        $stmt->bind_param("isssssssssissii", $localCod,$row['con1'],$row['lic1'],$row['con2'],$row['lic2'],$row['ayudante'],$row['destino'],$row['placa'],$fecha,$row['hora'],$row['carril'],$reservas,$row['zona_reserva'],$asientos,$sucursal);
+        $stmt = $conexion->prepare("INSERT INTO reporte (codR,con1,lic1,con2,lic2,ayudante,destino,placa,fecha,hora,carril,sucursal,sincronizado,deleted) VALUES (?,?,?,?,?,?,?,?,?,?,?,1,0)");
+        $stmt->bind_param("issssssssssi", $localCod,$row['con1'],$row['lic1'],$row['con2'],$row['lic2'],$row['ayudante'],$row['destino'],$row['placa'],$fecha,$row['hora'],$row['carril'],$sucursal);
         $stmt->execute();
-    }
-
-    // blocked seats
-    if ($row['reservas']) {
-        // fetch blocked from supabase
     }
 
     $pushed++;
     if ($row['updated_at'] > $maxUpdated) $maxUpdated = $row['updated_at'];
 }
 
-// update sync_state
 if ($maxUpdated) {
     $stmt = $conexion->prepare("INSERT INTO sync_state (tabla,sucursal,last_sync) VALUES ('reportes',?,?) ON DUPLICATE KEY UPDATE last_sync=?");
     $stmt->bind_param("iss", $sucursal, $maxUpdated, $maxUpdated);

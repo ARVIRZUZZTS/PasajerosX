@@ -7,31 +7,13 @@ header('Content-Type: application/json');
 
 $sucursal = (int)env('SUCURSAL', 1);
 
-function to_iso_date($d) {
-    $d = trim((string)$d);
-    if ($d === '') return null;
-    if (preg_match('#^(\d{2})/(\d{2})/(\d{4})$#', $d, $m)) {
-        return $m[3] . '-' . $m[2] . '-' . $m[1];
-    }
-    return $d;
-}
-
-function to_int_array($s) {
-    $out = [];
-    foreach (preg_split('/[,\s]+/', (string)$s) as $t) {
-        $t = trim($t);
-        if ($t !== '' && is_numeric($t)) $out[] = (int)$t;
-    }
-    return array_values(array_unique($out));
-}
-
 $res = mysqli_query($conexion, "SELECT * FROM reporte WHERE sucursal = $sucursal AND sincronizado = 0 AND deleted = 0");
 $rows = [];
 while ($r = mysqli_fetch_assoc($res)) {
     $rows[] = [
         'sucursal' => (int)$r['sucursal'],
         'local_codr' => (int)$r['codR'],
-        'fecha' => to_iso_date($r['fecha']),
+        'fecha' => $r['fecha'],
         'destino' => $r['destino'],
         'placa' => $r['placa'],
         'hora' => $r['hora'],
@@ -41,10 +23,6 @@ while ($r = mysqli_fetch_assoc($res)) {
         'con2' => $r['con2'],
         'lic2' => $r['lic2'],
         'ayudante' => $r['ayudante'],
-        'marca' => $r['marca'],
-        'reservas' => (bool)$r['reservas'],
-        'zona_reserva' => $r['zona_reserva'],
-        'asientos_reservados' => to_int_array($r['asientos_reservados']),
         'sincronizado' => 0,
         'deleted' => false
     ];
@@ -62,7 +40,7 @@ if ($code >= 200 && $code < 300) {
         $id = (int)$r['local_codr'];
         mysqli_query($conexion, "UPDATE reporte SET sincronizado = 1 WHERE codR = $id");
     }
-    echo json_encode(['pushed' => count($rows), 'supabase' => $data]);
+    echo json_encode(['pushed' => count($rows)]);
 } else {
     http_response_code(500);
     echo json_encode(['error' => 'Supabase error', 'code' => $code, 'detail' => $data]);

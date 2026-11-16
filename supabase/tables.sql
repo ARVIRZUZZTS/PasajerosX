@@ -68,9 +68,6 @@ CREATE TABLE public.destinos (
 CREATE TABLE public.sucursal (
   id_sucursal integer NOT NULL DEFAULT nextval('sucursal_id_sucursal_seq'::regclass),
   nombre character varying NOT NULL UNIQUE,
-  reservas boolean DEFAULT false,
-  zona_reserva character varying,
-  asientos_reservados integer[],
   updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT sucursal_pkey PRIMARY KEY (id_sucursal)
 );
@@ -89,45 +86,54 @@ CREATE TABLE public.flota (
   id_destino character varying,
   nombre_planilla character varying,
   tipo character varying NOT NULL DEFAULT 'Ok'::character varying,
-  sucursal integer,
   updated_at timestamp with time zone NOT NULL DEFAULT now(),
   estado character varying,
   CONSTRAINT flota_pkey PRIMARY KEY (placa)
 );
-
--- Reservas por reporte + boleteria (ver migracion_reservas_boleteria.sql)
+CREATE TABLE public.user_info (
+  id_user_info integer NOT NULL DEFAULT nextval('user_info_id_user_info_seq'::regclass),
+  id_user integer NOT NULL REFERENCES public.usuarios(id_usuario) ON DELETE CASCADE,
+  atributo character varying NOT NULL,
+  value character varying(20),
+  CONSTRAINT user_info_pkey PRIMARY KEY (id_user_info),
+  UNIQUE (id_user, atributo)
+);
 CREATE TABLE public.reportes (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   sucursal integer NOT NULL,
   local_codr integer,
-  fecha date,
-  destino character varying,
-  placa character varying,
-  hora character varying,
-  carril character varying DEFAULT '5',
-  con1 character varying,
-  lic1 character varying,
-  con2 character varying,
-  lic2 character varying,
-  ayudante character varying,
-  marca character varying,
-  reservas boolean DEFAULT false,
-  zona_reserva character varying,
-  asientos_reservados integer[],
+  fecha character varying(10),
+  destino character varying(100),
+  placa character varying(20),
+  hora character varying(10),
+  carril character varying(3),
+  con1 character varying(150),
+  lic1 character varying(20),
+  con2 character varying(150),
+  lic2 character varying(20),
+  ayudante character varying(150),
   sincronizado smallint DEFAULT 0,
   deleted boolean DEFAULT false,
   updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT reportes_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.reservas (
+  id_reserva uuid NOT NULL DEFAULT gen_random_uuid(),
+  sucursal integer NOT NULL,
+  reporte_id uuid,
+  asientos_reservados integer[],
+  sincronizado smallint DEFAULT 0,
+  deleted boolean DEFAULT false,
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT reservas_pkey PRIMARY KEY (id_reserva)
 );
 CREATE TABLE public.reporte_pasajeros (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   sucursal integer NOT NULL,
   reporte_id uuid,
   local_codp integer,
-  nombre character varying,
-  ci character varying,
-  fecha date,
-  destino character varying,
+  nombre character varying(150),
+  ci character varying(20),
   precio numeric,
   asiento integer,
   boletero_id integer,
@@ -141,24 +147,10 @@ CREATE TABLE public.asignacion_boletero (
   sucursal integer NOT NULL,
   reporte_id uuid NOT NULL,
   boletero_id integer NOT NULL,
-  asignado_por integer,
-  estado character varying DEFAULT 'activo',
-  notas text,
+  estado character varying(20) DEFAULT 'activo',
+  asientos_asignados integer[],
   sincronizado smallint DEFAULT 0,
   deleted boolean DEFAULT false,
   updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT asignacion_boletero_pkey PRIMARY KEY (id)
-);
-CREATE TABLE public.asientos_bloqueados (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  sucursal integer NOT NULL,
-  reporte_id uuid NOT NULL,
-  asiento integer NOT NULL,
-  motivo character varying,
-  zona character varying,
-  reservado_para character varying,
-  sincronizado smallint DEFAULT 0,
-  deleted boolean DEFAULT false,
-  updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT asientos_bloqueados_pkey PRIMARY KEY (id)
 );

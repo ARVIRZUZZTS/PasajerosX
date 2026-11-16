@@ -24,12 +24,16 @@ if ($result->num_rows > 0) {
 }
 
 // Verificar asiento bloqueado (reserva)
-$blk = $conexion->prepare("SELECT id FROM asientos_bloqueados WHERE codR = ? AND asiento = ? AND deleted = 0");
-$blk->bind_param("ii", $codR, $asiento);
+$blk = $conexion->prepare("SELECT asientos_reservados FROM reservas WHERE codR = ? AND deleted = 0");
+$blk->bind_param("i", $codR);
 $blk->execute();
-if ($blk->get_result()->num_rows > 0) {
-    echo json_encode(["success" => false, "error" => "El asiento está bloqueado por reserva"]);
-    exit;
+$res = $blk->get_result()->fetch_assoc();
+if ($res && $res['asientos_reservados'] !== null && $res['asientos_reservados'] !== '') {
+    $reservados = array_map('trim', explode(',', $res['asientos_reservados']));
+    if (in_array((string)$asiento, $reservados, true)) {
+        echo json_encode(["success" => false, "error" => "El asiento está bloqueado por reserva"]);
+        exit;
+    }
 }
 
 // Actualizar el asiento

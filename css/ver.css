@@ -107,6 +107,34 @@ input {
 .asLib:hover {
     background-color: rgb(4, 148, 4);
 }
+.modal-asignacion {
+    width: min(1100px, 95vw) !important;
+    max-height: 90vh;
+    overflow: auto;
+    text-align: left;
+    padding: 16px;
+}
+.modal-asig-body {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+.modal-asig-left { flex: 1 1 60%; }
+.modal-asig-right { flex: 0 0 260px; display: flex; flex-direction: column; gap: 10px; }
+.boleteros-panel { display: flex; flex-direction: column; gap: 8px; }
+.boletero-btn {
+    padding: 10px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: left;
+    opacity: 1;
+    transition: opacity 0.2s ease, filter 0.2s ease;
+}
+.boletero-btn.inactive { opacity: 0.35; filter: grayscale(0.6); cursor: not-allowed; }
+.boletero-btn.active { outline: 3px solid #000; }
+.modal-asig-count { font-weight: bold; color: #0a1f44; }
 .extra {
   position: absolute;
   display: flex;

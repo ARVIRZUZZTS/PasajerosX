@@ -690,4 +690,202 @@ document.addEventListener('keydown', (event) => {
             event.preventDefault();
             break;
     }
+});// --- Asignación de boleteros ---
+let asigBoleteros = [];
+let asigAssignments = {};
+let asigSeatToBoletero = {};
+let asigActiveBoletero = null;
+let asigBusData = [];
+let asigBlocked = [];
+let asigOccupied = [];
+
+async function abrirAsignacion() {
+    const codR = new URLSearchParams(window.location.search).get('codR');
+    if (!codR) { alert('No hay reporte seleccionado'); return; }
+    const modal = document.getElementById('modalAsignacion');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    try {
+        const reporteRes = await fetch('php/common/getReporte.php?codR=' + encodeURIComponent(codR));
+        const reporte = await reporteRes.json();
+        if (!reporte || !reporte.placa) { alert('Reporte sin placa'); cerrarAsignacion(); return; }
+        const [busRes, pasRes, bloqRes, asigRes, bolRes] = await Promise.all([
+            fetch('php/common/getBus.php?placa=' + encodeURIComponent(reporte.placa)),
+            fetch('php/common/getPasajeros.php?codR=' + encodeURIComponent(codR)),
+            fetch('php/diario/getBloqueados.php?codR=' + encodeURIComponent(codR)),
+            fetch('php/asignacion/getAsignaciones.php?codR=' + encodeURIComponent(codR)),
+            fetch('php/usuarios/getBoleteros.php')
+        ]);
+        asigBusData = await busRes.json();
+        const pasajeros = await pasRes.json();
+        const bloqueados = await bloqRes.json();
+        const asignaciones = await asigRes.json();
+        asigBoleteros = await bolRes.json();
+        asigOccupied = Array.isArray(pasajeros) ? pasajeros.map(p => p.asiento.toString()) : [];
+        asigBlocked = Array.isArray(bloqueados) ? bloqueados.map(b => (b.asiento || b).toString()) : [];
+        asigAssignments = {};
+        asigSeatToBoletero = {};
+        if (Array.isArray(asignaciones)) {
+            asignaciones.forEach(a => {
+                const bid = a.boletero_id;
+                const seats = (a.asientos_asignados || '').toString().split(',').map(s => s.trim()).filter(Boolean);
+                asigAssignments[bid] = new Set(seats);
+                seats.forEach(s => { asigSeatToBoletero[s] = bid; });
+            });
+        }
+        asigBoleteros.forEach(b => {
+            if (!asigAssignments[b.id_usuario]) asigAssignments[b.id_usuario] = new Set();
+        });
+        renderBoleterosPanel();
+        renderAsigSeats();
+        updateAsigCount();
+    } catch (e) {
+        console.error('Error abriendo asignación', e);
+        alert('Error al cargar asignación');
+        cerrarAsignacion();
+    }
+}
+
+function cerrarAsignacion() {
+    const modal = document.getElementById('modalAsignacion');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
+    asigActiveBoletero = null;
+}
+
+function renderBoleterosPanel() {
+    const panel = document.getElementById('boleterosPanel');
+    if (!panel) return;
+    panel.innerHTML = '';
+    asigBoleteros.forEach(b => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'boletero-btn' + (asigActiveBoletero === b.id_usuario ? ' active' : '') + (asigActiveBoletero && asigActiveBoletero !== b.id_usuario ? ' inactive' : '');
+        btn.style.background = 'linear-gradient(135deg, ' + b.color_1 + ', ' + b.color_2 + ')';
+        btn.style.color = b.color_texto;
+        const count = (asigAssignments[b.id_usuario] || new Set()).size;
+        btn.textContent = b.nombre + ' (' + count + ')';
+        btn.addEventListener('click', () => toggleBoleteroActivo(b.id_usuario));
+        panel.appendChild(btn);
+    });
+}
+
+function toggleBoleteroActivo(id) {
+    if (asigActiveBoletero === id) {
+        asigActiveBoletero = null;
+    } else {
+        asigActiveBoletero = id;
+    }
+    renderBoleterosPanel();
+}
+
+function renderAsigSeats() {
+    const container = document.getElementById('seatMapAsignacion');
+    if (!container) return;
+    container.innerHTML = '';
+    asigBusData.forEach(item => {
+        if (item.tipo !== 'asiento') return;
+        const num = item.numAs.toString();
+        const div = document.createElement('div');
+        div.className = 'asiento';
+        div.textContent = num;
+        div.style.position = 'absolute';
+        div.style.left = (parseInt(item.posX) || 0) + 'px';
+        div.style.top = (parseInt(item.posY) || 0) + 'px';
+        div.style.width = '40px';
+        div.style.height = '40px';
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.style.justifyContent = 'center';
+        div.style.borderRadius = '5px';
+        div.style.cursor = 'default';
+        const isBlocked = asigBlocked.includes(num);
+        const isOccupied = asigOccupied.includes(num);
+        const bid = asigSeatToBoletero[num];
+        if (isBlocked) {
+            div.classList.add('asBloq');
+            div.style.cursor = 'not-allowed';
+        } else if (isOccupied) {
+            div.classList.add('asOcu');
+            div.style.cursor = 'not-allowed';
+        } else if (bid && asigBoleteros.find(b => b.id_usuario === bid)) {
+            const b = asigBoleteros.find(x => x.id_usuario === bid);
+            div.style.background = 'linear-gradient(135deg, ' + b.color_1 + ', ' + b.color_2 + ')';
+            div.style.color = b.color_texto;
+            div.style.cursor = 'pointer';
+            div.addEventListener('click', () => toggleAsientoAsignacion(num));
+        } else {
+            div.classList.add('asLib');
+            div.style.cursor = 'pointer';
+            div.addEventListener('click', () => toggleAsientoAsignacion(num));
+        }
+        container.appendChild(div);
+    });
+}
+
+function toggleAsientoAsignacion(num) {
+    if (!asigActiveBoletero) return;
+    const bid = asigActiveBoletero;
+    Object.keys(asigAssignments).forEach(k => {
+        const id = parseInt(k);
+        if (id !== bid && asigAssignments[id] && asigAssignments[id].has(num)) {
+            asigAssignments[id].delete(num);
+        }
+    });
+    if (!asigAssignments[bid]) asigAssignments[bid] = new Set();
+    if (asigAssignments[bid].has(num)) {
+        asigAssignments[bid].delete(num);
+        delete asigSeatToBoletero[num];
+    } else {
+        asigAssignments[bid].add(num);
+        asigSeatToBoletero[num] = bid;
+    }
+    renderBoleterosPanel();
+    renderAsigSeats();
+    updateAsigCount();
+}
+
+function updateAsigCount() {
+    const el = document.getElementById('modalAsigCount');
+    if (!el) return;
+    let total = 0;
+    Object.values(asigAssignments).forEach(s => { total += s.size; });
+    el.textContent = total;
+}
+
+async function guardarAsignacion() {
+    const codR = new URLSearchParams(window.location.search).get('codR');
+    try {
+        await Promise.all(asigBoleteros.map(b => {
+            const seats = Array.from(asigAssignments[b.id_usuario] || []).join(',');
+            const datos = new FormData();
+            datos.append('codR', codR);
+            datos.append('boletero_id', b.id_usuario);
+            datos.append('boletero_nombre', b.nombre);
+            datos.append('asientos_asignados', seats);
+            datos.append('estado', seats ? 'activo' : 'liberado');
+            return fetch('php/asignacion/saveAsignacion.php', { method: 'POST', body: datos }).then(r => r.json());
+        }));
+        alert('Asignación guardada');
+        cerrarAsignacion();
+    } catch (e) {
+        console.error(e);
+        alert('Error al guardar asignación');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.getElementById('modalAsigClose');
+    if (closeBtn) closeBtn.addEventListener('click', cerrarAsignacion);
+    const cancelBtn = document.getElementById('modalAsigCancel');
+    if (cancelBtn) cancelBtn.addEventListener('click', cerrarAsignacion);
+    const confirmBtn = document.getElementById('modalAsigConfirm');
+    if (confirmBtn) confirmBtn.addEventListener('click', guardarAsignacion);
+    const modal = document.getElementById('modalAsignacion');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) cerrarAsignacion();
+        });
+    }
 });

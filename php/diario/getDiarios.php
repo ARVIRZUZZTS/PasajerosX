@@ -4,9 +4,9 @@
     if (isset($_GET['fecha'])) {
         $fecha = $_GET['fecha'];
 
-        $query = "SELECT p.*, r.placa AS reportePlaca FROM pasajeros p LEFT JOIN reporte r ON p.codR = r.codR WHERE p.fecha = ? ORDER BY p.asiento";
+        $query = "SELECT p.*, r.placa AS reportePlaca, r.destino AS reporteDestino, r.fecha AS reporteFecha FROM pasajeros p LEFT JOIN reporte r ON p.codR = r.codR WHERE (r.fecha = ? OR (p.codR IS NULL AND p.fecha = ?)) ORDER BY p.asiento";
         $stmt = $conexion->prepare($query);
-        $stmt->bind_param("s", $fecha);
+        $stmt->bind_param("ss", $fecha, $fecha);
 
         if ($stmt->execute()) {
             $res = $stmt->get_result();

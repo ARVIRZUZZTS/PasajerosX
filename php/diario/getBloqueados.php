@@ -8,12 +8,16 @@ if (!$codR) {
     exit;
 }
 
-$stmt = $conexion->prepare("SELECT asiento, motivo, zona FROM asientos_bloqueados WHERE codR = ? AND deleted = 0");
+$stmt = $conexion->prepare("SELECT asientos_reservados FROM reservas WHERE codR = ? AND deleted = 0");
 $stmt->bind_param("i", $codR);
 $stmt->execute();
-$res = $stmt->get_result();
+$res = $stmt->get_result()->fetch_assoc();
 $out = [];
-while ($row = $res->fetch_assoc()) $out[] = $row;
+if ($res && $res['asientos_reservados'] !== null && $res['asientos_reservados'] !== '') {
+    foreach (array_map('trim', explode(',', $res['asientos_reservados'])) as $a) {
+        if ($a !== '' && is_numeric($a)) $out[] = ['asiento' => (int)$a];
+    }
+}
 echo json_encode($out);
 $conexion->close();
 ?>

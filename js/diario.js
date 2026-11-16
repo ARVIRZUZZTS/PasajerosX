@@ -74,7 +74,7 @@ function getDiarios() {
                     <td class="dl">${p.codR ? `Reporte ${p.codR} - ${p.reportePlaca || ''}` : 'Sin reporte'}</td>
                     <td class="nm">${p.nombre}</td>
                     <td class="ci">${p.ci}</td>
-                    <td class="dt">${p.destino}</td>
+                    <td class="dt">${p.destino || p.reporteDestino || ''}</td>
                     <td class="as">${p.asiento}</td>
                     <td class="pr">${p.precio}</td>
                     <td><button class="im" onclick="printy(${p.codP})"><img src="img/printW.png"></button></td>
