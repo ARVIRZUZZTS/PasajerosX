@@ -102,7 +102,7 @@ input, button, textarea {
     background-color: rgb(0, 88, 104);
 }
 /*///////////////MODAL////////////////////////////////////*/
-#printFull {color: white; background-color: #003591; outline: none; padding: 10px; border-radius: 5px;margin: 10px; transition: 300ms;}
+#printFull {color: white; background-color: #003591; outline: none; padding: 10px; border-radius: 5px; transition: 300ms;}
 
 /*///////////////////////////////////////////////////*/
 #printReporte,
@@ -117,107 +117,3 @@ input, button, textarea {
     display: block;
     margin: 0 auto;
 }
-@media print {
-    div {
-        page-break-inside: avoid;
-    }
-    #printP * {
-        visibility: visible;
-    }
-
-    /*///////////////////////////////////////////////////*/
-    #pasajeroPrintBody {
-        width: 331px;
-    }
-    #pasajeroPrintBody div {
-        display: flex;
-    }
-    #pasajeroPrintBody div h3 {
-        padding: 5px;
-        margin: 0px;
-    }
-    .marNon {
-        margin: 0px 0px 3px 0px;
-    }
-    .strCent {
-        text-align: center !important;
-        width: 100% !important;
-    }
-    .big {
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-    }
-    #fact {
-        display: flex;
-        flex-direction: column;
-    }
-    .cien {
-        text-align: left !important;
-    }
-    #dtP {
-        border-top: 1px solid black;
-        border-right: 1px solid black;
-        border-left: 1px solid black;
-        border-bottom: 1px solid black;
-    }
-    #nmP {border: 1px solid black; border-top: 0px;}
-    #buenV {
-        margin-top: 0px !important;
-    }
-    .ciPr {
-        margin: 0px;
-        text-align: left !important;
-        border: 1px solid black;
-        border-top: 0px;
-    }
-    .pl {
-        padding: 5px;
-        text-align: left !important;
-        width: 70% !important;
-        border-left: 1px solid black;
-        border-bottom: 1px solid black;
-        border-right: 1px solid black;
-    }
-    .ca {        
-        text-align: left !important;
-        border-right: 1px solid black;
-        border-bottom: 1px solid black;
-        width: 30% !important;
-    }    
-    #asP {
-        text-align: left !important;
-        border: 1px solid black;
-        border-top: 0px;
-        width: 50% !important;        
-    }
-    #prP {        
-        text-align: left !important;
-        border-left: 1px solid black;
-        border-bottom: 1px solid black;
-        width: 50% !important;
-    }
-    #emP {
-        text-align: left !important;
-        border-left: 1px solid black;
-        border-bottom: 1px solid black;
-        border-right: 1px solid black;
-        width: 100% !important;
-    }
-    #hrP {
-        width: 50%;
-        text-align: left !important;
-        border-right: 1px solid black;
-        border-bottom: 1px solid black;
-    }
-    #bv {
-        margin: 5px 0px 5px 0px;
-    }
-    #msj {
-        margin-top: 0px;
-        font-size: large;
-    }
-    #pasajeroPrintBody h1 , #pasajeroPrintBody h3, #pasajeroPrintBody p{
-        text-align: center;
-        width: 100%;
-    }
-}   

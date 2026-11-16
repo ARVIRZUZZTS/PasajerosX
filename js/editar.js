@@ -140,6 +140,7 @@ const getVal = (id) => {
 
 async function save() {
     const asientosOcupados = await getAsientosOcupados();
+    const asientosBloqueados = await getAsientosBloqueados();
     
     const pasajerosInputs = document.querySelectorAll('#dinamic .pasajero');
     let asientosDuplicados = [];
@@ -149,8 +150,14 @@ async function save() {
         const asientoInput = div.querySelector('.as');
         const asiento = asientoInput.value.trim() || asientoInput.placeholder;
         
+        asientoInput.classList.remove('asiento-rojo');
         if (asientosOcupados.includes(asiento.toString()) && asientoInput.value.trim() !== '') {
             asientosInvalidos.push(asiento);
+            asientoInput.classList.add('asiento-rojo');
+        }
+        if (asientosBloqueados.includes(asiento.toString())) {
+            asientosInvalidos.push(asiento);
+            asientoInput.classList.add('asiento-rojo');
         }
         
         pasajerosInputs.forEach(otherDiv => {
@@ -159,6 +166,7 @@ async function save() {
                 const otherAsiento = otherAsientoInput.value.trim() || otherAsientoInput.placeholder;
                 if (asiento === otherAsiento && asientoInput.value.trim() !== '') {
                     asientosDuplicados.push(asiento);
+                    asientoInput.classList.add('asiento-rojo');
                 }
             }
         });
@@ -196,6 +204,18 @@ async function getAsientosOcupados() {
         return pasajeros.map(p => p.asiento.toString());
     } catch (error) {
         console.error('Error al obtener asientos ocupados:', error);
+        return [];
+    }
+}
+
+async function getAsientosBloqueados() {
+    try {
+        const codR = new URLSearchParams(window.location.search).get('codR');
+        const response = await fetch(`php/diario/getBloqueados.php?codR=${encodeURIComponent(codR)}`);
+        const data = await response.json();
+        return Array.isArray(data) ? data.map(b => b.asiento.toString()) : [];
+    } catch (error) {
+        console.error('Error al obtener asientos bloqueados:', error);
         return [];
     }
 }
@@ -305,19 +325,22 @@ async function cargarDisenoBus(placa) {
     const busElement = document.getElementById('bus');
     busElement.innerHTML = '';
     
-    // Obtener diseño del bus y pasajeros en paralelo
-    const [disenoResponse, pasajerosResponse] = await Promise.all([
+    // Obtener diseño del bus, pasajeros y bloqueados en paralelo
+    const [disenoResponse, pasajerosResponse, bloqueadosResponse] = await Promise.all([
       fetch(`php/common/getBus.php?placa=${encodeURIComponent(placa)}`),
-      fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`)
+      fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`),
+      fetch(`php/diario/getBloqueados.php?codR=${encodeURIComponent(codR)}`)
     ]);
     
-    const [disenoData, pasajeros] = await Promise.all([
+    const [disenoData, pasajeros, bloqueados] = await Promise.all([
       disenoResponse.json(),
-      pasajerosResponse.json()
+      pasajerosResponse.json(),
+      bloqueadosResponse.json()
     ]);
     
-    // Extraer los asientos ocupados
+    // Extraer los asientos ocupados y bloqueados
     const asientosOcupados = pasajeros.map(p => p.asiento);
+    const asientosBloqueados = Array.isArray(bloqueados) ? bloqueados.map(b => b.asiento) : [];
     
     disenoData.forEach(item => {
       const div = document.createElement('div');
@@ -339,9 +362,16 @@ async function cargarDisenoBus(placa) {
         div.style.width = '40px';
         div.style.height = '40px';
         
-        // Verificar si el asiento está ocupado
+        // Verificar si el asiento está ocupado o bloqueado
         const estaOcupado = asientosOcupados.some(a => a.toString() === item.numAs.toString());
-        div.classList.add(estaOcupado ? 'asOcu' : 'asLib');
+        const estaBloqueado = asientosBloqueados.some(a => a.toString() === item.numAs.toString());
+        if (estaOcupado) {
+          div.classList.add('asOcu');
+        } else if (estaBloqueado) {
+          div.classList.add('asBloq');
+        } else {
+          div.classList.add('asLib');
+        }
         
       } else {
         div.className = 'extra';
@@ -374,9 +404,11 @@ async function cargarDisenoBus(placa) {
 }
 
 function obtenerPasajeros(codR) {
-    fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`)
-        .then(response => response.json())
-        .then(data => {
+    Promise.all([
+      fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`).then(r => r.json()),
+      fetch(`php/diario/getBloqueados.php?codR=${encodeURIComponent(codR)}`).then(r => r.json())
+    ]).then(([data, bloqueados]) => {
+            const bloqueadosArr = Array.isArray(bloqueados) ? bloqueados.map(b => b.asiento.toString()) : [];
             const contenedor = document.getElementById('dinamic');
             contenedor.innerHTML = ''; // Limpiar contenido anterio
             data.forEach(pasajero => {
@@ -388,6 +420,20 @@ function obtenerPasajeros(codR) {
                 inputSit.type = 'number';
                 inputSit.placeholder = pasajero.asiento;
                 inputSit.classList.add('as');
+
+                // Marcar en rojo si el asiento está bloqueado
+                if (bloqueadosArr.includes(String(pasajero.asiento))) {
+                    inputSit.classList.add('asiento-rojo');
+                }
+
+                inputSit.addEventListener('input', () => {
+                    const val = inputSit.value.trim() || inputSit.placeholder;
+                    if (bloqueadosArr.includes(val) ) {
+                        inputSit.classList.add('asiento-rojo');
+                    } else {
+                        inputSit.classList.remove('asiento-rojo');
+                    }
+                });
 
                 const inputNombre = document.createElement('input');
                 inputNombre.type = 'text';

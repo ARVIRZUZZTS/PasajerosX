@@ -12,7 +12,7 @@ $codP = $_GET['codP'];
 $response = ['hora' => ''];
 
 // Primero obtenemos el codR del pasajero
-$query = "SELECT codR FROM persona WHERE codP = ?";
+$query = "SELECT codR FROM pasajeros WHERE codP = ?";
 $stmt = $conexion->prepare($query);
 $stmt->bind_param("i", $codP);
 $stmt->execute();

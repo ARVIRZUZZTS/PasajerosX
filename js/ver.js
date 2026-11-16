@@ -1,6 +1,5 @@
 ﻿const params = new URLSearchParams(window.location.search);
 const codR = params.get('codR');
-var total = 0;
 window.onload = () => {
     renderEntradas();
     obtenerDatosReporte(codR);
@@ -118,7 +117,6 @@ function actualizarFechaHoraFooter() {
     document.getElementById('hora').textContent = ahora.toLocaleTimeString('es-ES', opcionesHora);
 }
 function obtenerPasajeros(codR) {
-    total = 0;
     fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`)
         .then(response => response.json())
         .then(data => {
@@ -170,12 +168,9 @@ function obtenerPasajeros(codR) {
                     div.appendChild(h3Pr);
                     div.appendChild(printButton);
                     
-                    total += parseFloat(pasajero.precio) || 0;
                     contenedor.appendChild(div);
                 });
             }
-            const totalEl = document.getElementById("total");
-            if (totalEl) totalEl.textContent = total + " Bs";
         })
         .catch(error => {
             console.error('Error al obtener los pasajeros:', error);
@@ -191,19 +186,22 @@ async function cargarDisenoBus(placa) {
     const busElement = document.getElementById('bus');
     busElement.innerHTML = '';
     
-    // Obtener diseño del bus y pasajeros en paralelo
-    const [disenoResponse, pasajerosResponse] = await Promise.all([
+    // Obtener diseño del bus, pasajeros y bloqueados en paralelo
+    const [disenoResponse, pasajerosResponse, bloqueadosResponse] = await Promise.all([
       fetch(`php/common/getBus.php?placa=${encodeURIComponent(placa)}`),
-      fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`)
+      fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`),
+      fetch(`php/diario/getBloqueados.php?codR=${encodeURIComponent(codR)}`)
     ]);
     
-    const [disenoData, pasajeros] = await Promise.all([
+    const [disenoData, pasajeros, bloqueados] = await Promise.all([
       disenoResponse.json(),
-      pasajerosResponse.json()
+      pasajerosResponse.json(),
+      bloqueadosResponse.json()
     ]);
     
-    // Extraer los asientos ocupados
+    // Extraer los asientos ocupados y bloqueados
     const asientosOcupados = pasajeros.map(p => p.asiento);
+    const asientosBloqueados = Array.isArray(bloqueados) ? bloqueados.map(b => b.asiento) : [];
     
     disenoData.forEach(item => {
       const div = document.createElement('div');
@@ -225,10 +223,13 @@ async function cargarDisenoBus(placa) {
         div.style.width = '40px';
         div.style.height = '40px';
         
-        // Verificar si el asiento está ocupado
+        // Verificar si el asiento está ocupado o bloqueado
         const estaOcupado = asientosOcupados.some(a => a.toString() === item.numAs.toString());
+        const estaBloqueado = asientosBloqueados.some(a => a.toString() === item.numAs.toString());
         if (estaOcupado) {
           div.classList.add('asOcu');
+        } else if (estaBloqueado) {
+          div.classList.add('asBloq');
         } else {
           div.classList.add('asLib');
           // Hacer el asiento clickeable
@@ -277,19 +278,14 @@ function setTitleDat(codR){
     document.getElementById("titleDat").textContent = "REPORTE N° " + codR;
 }
 
+const PRINT_CSS_HREF = new URL('css/print-ver.css', window.location.href).href;
+const LOGO_URL = new URL('img/logXXF.png', window.location.href).href;
+const PRINT_CSS_CRITICO = '@page { size: A4 portrait; margin: 0.5cm; }';
+
 function printy(codP) {
-    const printReporte = document.getElementById('printReporte');
-    const printPasajero = document.getElementById('printPasajero');
     const horaActual = document.getElementById("hora").textContent;
     const fechaActual = document.getElementById("fe").textContent;
-    
-    // Limpiar contenedores de impresión
-    printReporte.style.display = 'none';
-    printReporte.innerHTML = '';
-    printPasajero.style.display = 'none';
-    printPasajero.innerHTML = '';
 
-    // Obtener datos comunes
     const datos = {
         c1: document.getElementById("c1").textContent,
         l1: document.getElementById("l1").textContent,
@@ -307,10 +303,8 @@ function printy(codP) {
     };
 
     if (codP == 0) {
-        // IMPRIMIR LISTA DE PASAJEROS (con múltiples copias y cortes) - MANTENEMOS ESTO IGUAL
-        const cantidad = prompt("¿Cuántas copias de la lista deseas imprimir?", "1");
+        const cantidad = prompt("Cuántas copias de la lista deseas imprimir?", "1");
         if (cantidad === null) return;
-        
         const numCopias = parseInt(cantidad);
         if (isNaN(numCopias) || numCopias <= 0) {
             alert("Por favor ingresa un número válido mayor que 0");
@@ -318,88 +312,61 @@ function printy(codP) {
         }
 
         const codR = new URLSearchParams(window.location.search).get('codR');
+        const win = abrirHojaImpresion({ preset: 'a4', titulo: 'Lista de pasajeros' });
+        if (!win) {
+            alert("Permite las ventanas emergentes e intenta de nuevo.");
+            return;
+        }
 
         fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`)
             .then(response => response.json())
             .then(data => {
-                printReporte.innerHTML = '';
-                
-                // Plantilla HTML para la lista de pasajeros
-                const listaHTML = (index) => `
-                    <div class="copia-lista" ${index < numCopias - 1 ? 'style="page-break-after: always;"' : ''}>
-                        <div id="topPrint">
-                            <img id="imgPr" src="img/logXXF.png" alt="Logo" onerror="this.style.display='none'">
-                            <div>
-                                <h2 id="lbsc">LINEA DE BUSES EXP SANTA CRUZ</h2>
-                            </div>
-                            <div>
-                                <h3 class="tizq">CONDUCTOR 1: ${datos.c1} (Licencia: ${datos.l1})</h3>
-                            </div>
-                            <div>
-                                <h3 class="tizq">CONDUCTOR 2: ${datos.c2} (Licencia: ${datos.l2})</h3>
-                            </div>
-                            <div>
-                                <h3 class="tizq">PLACA: ${datos.pl}</h3>
-                                <h3>DESTINO: ${datos.dt}</h3>
-                            </div>
-                            <div>                    
-                                <h3 class="tizq">FECHA: ${datos.fe}</h3>
-                                <h3>HORA: ${datos.hr}</h3>
-                            </div>
-                        </div>
-                        <hr>
-                        <div id="titlesPr">
-                            <h3 class="asP">N°</h3>
-                            <h3 class="nmP">NOMBRE</h3>
-                            <h3 class="ciP">CI</h3>
-                        </div>
-                        <div id="pasajerosPrint">
-                            ${data.map(pasajero => `
-                                <div class="pasajeroPrint">
-                                    <h3 class="asP">${pasajero.asiento}</h3>
-                                    <h3 class="nmP">${pasajero.nombre}</h3>
-                                    <h3 class="ciP">${pasajero.ci}</h3>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-
-                // Agregar todas las copias al contenedor
+                const copies = [];
                 for (let i = 0; i < numCopias; i++) {
-                    const copiaDiv = document.createElement('div');
-                    copiaDiv.innerHTML = listaHTML(i);
-                    printReporte.appendChild(copiaDiv);
+                    const breakStyle = i < numCopias - 1 ? ' style="page-break-after: always;"' : '';
+                    copies.push(`
+                        <div class="copia-lista"${breakStyle}>
+                            <div id="topPrint">
+                                <img id="imgPr" src="${esc(LOGO_URL)}" alt="Logo">
+                                <div><h2 id="lbsc">LINEA DE BUSES EXP SANTA CRUZ</h2></div>
+                                <div><h3 class="tizq">CONDUCTOR 1: ${esc(datos.c1)} (Licencia: ${esc(datos.l1)})</h3></div>
+                                <div><h3 class="tizq">CONDUCTOR 2: ${esc(datos.c2)} (Licencia: ${esc(datos.l2)})</h3></div>
+                                <div>
+                                    <h3 class="tizq">PLACA: ${esc(datos.pl)}</h3>
+                                    <h3>DESTINO: ${esc(datos.dt)}</h3>
+                                </div>
+                                <div>
+                                    <h3 class="tizq">FECHA: ${esc(datos.fe)}</h3>
+                                    <h3>HORA: ${esc(datos.hr)}</h3>
+                                </div>
+                            </div>
+                            <hr>
+                            <div id="titlesPr">
+                                <h3 class="asP">N°</h3>
+                                <h3 class="nmP">NOMBRE</h3>
+                                <h3 class="ciP">CI</h3>
+                            </div>
+                            <div id="pasajerosPrint">
+                                ${data.map(pasajero => `
+                                    <div class="pasajeroPrint">
+                                        <h3 class="asP">${esc(pasajero.asiento)}</h3>
+                                        <h3 class="nmP">${esc(pasajero.nombre)}</h3>
+                                        <h3 class="ciP">${esc(pasajero.ci)}</h3>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `);
                 }
-
-                printReporte.style.display = 'block';
-
-                // Precargar imagen
-                const img = new Image();
-                img.src = 'img/logXXF.png';
-                img.onload = function() {
-                    document.querySelectorAll('#imgPr').forEach(imgEl => {
-                        imgEl.src = img.src;
-                    });
-                    setTimeout(() => {
-                        window.print();
-                        printReporte.style.display = 'none';
-                    }, 500);
-                };
-                img.onerror = function() {
-                    setTimeout(() => {
-                        window.print();
-                        printReporte.style.display = 'none';
-                    }, 500);
-                };
+                imprimirHTML({ win, titulo: 'Lista de pasajeros', cssHref: PRINT_CSS_HREF, cssCritico: PRINT_CSS_CRITICO, html: copies.join('') });
             })
             .catch(error => {
                 console.error("Error:", error);
                 alert("Error al cargar la lista de pasajeros");
+                try { win.close(); } catch (e) {}
             });
     } else if (codP == -1) {
-        const cantidad = prompt(`¿Cuántos tickets vacíos para el ${datos.pl} deseas imprimir?`, "1");
-        
+        const cantidad = prompt(`Cuántos tickets vacíos para el ${datos.pl} deseas imprimir?`, "1");
         if (cantidad === null) return;
         const numTickets = parseInt(cantidad);
         if (isNaN(numTickets) || numTickets <= 0) {
@@ -407,224 +374,168 @@ function printy(codP) {
             return;
         }
 
-        const ticketHTML = `
-        <div id="pasajeroPrintBody">
-            <img id="imgPr2" src="img/logXXF.png" alt="Logo">
-            <div id="adver">
-                <div id="fact">
-                    <h4 class="marNon strCent">EXIJA SU</h4>
-                    <h1 class="marNon strCent">FACTURA</h1>
-                </div>
-                <div>
-                    <h3>ESTE BOLETO CONSTITUYE RESERVA DE PASAJE</h3>
-                </div>
-            </div>
-            <div>
-                <h3 id="dtP" class="cien">De SC a: ${datos.dt}</h3>
-            </div>
-            <div>
-                <h3 id="nmP" class="cien big">NOMBRE: </h3>
-            </div>
-            <div>
-                <h3 class="ciPr big">CI/CEL: </h3>
-            </div>
-            <div>
-                <h3 class="pl">PLACA: </h3>
-                <h3 class="ca">CARRIL: ${datos.ca}</h3>
-            </div>
-            <div>
-                <h3 id="fechaPrint">FECHA: ${datos.fe}</h3>
-                <h3 id="hrP">HORA: </h3>
-            </div> 
-            <div>
-                <h3 id="prP" class="big">PRECIO: </h3>
-                <h3 id="asP" class="big">ASIENTO: </h3>                
-            </div>
-            <div>
-                <h3 id="emP" class="big">EMITIDO POR: </h3>
-            </div>
-            <h1 id="bv">¡¡BUEN VIAJE!!</h1>
-            <p id="msj">AVISE 3 HRS ANTES DE ABORDAR EL BUS EN CASO DE DEVOLUCION<br>
-                No valido para credito fiscal.
-            </p>
-        </div>
-        `;
-
-        document.getElementById('printPasajero').style.display = 'block';
-        document.getElementById("printPasajero").innerHTML = '';
-        
-        for (let i = 0; i < numTickets; i++) {
-            const ticketDiv = document.createElement('div');
-            ticketDiv.innerHTML = ticketHTML;
-            document.getElementById("printPasajero").appendChild(ticketDiv);
-            
-            if (i < numTickets - 1) {
-                const corte = document.createElement('div');
-                corte.style.pageBreakAfter = 'always';
-                document.getElementById("printPasajero").appendChild(corte);
-            }
+        const win = abrirHojaImpresion({ ancho: 900, alto: 900, titulo: 'Ticket vacío' });
+        if (!win) {
+            alert("Permite las ventanas emergentes e intenta de nuevo.");
+            return;
         }
 
-        const img = new Image();
-        img.src = 'img/logXXF.png';
-        img.onload = function() {
-            document.querySelectorAll('#imgPr2').forEach(imgEl => {
-                imgEl.src = img.src;
-            });
-            
-            setTimeout(() => {
-                window.print();
-                document.getElementById('printPasajero').style.display = 'none';
-            }, 200);
-        };
-        img.onerror = function() {
-            console.error("No se pudo cargar la imagen");
-            window.print();
-            document.getElementById('printPasajero').style.display = 'none';
-        };
+        const ticketHTML = `
+            <div id="pasajeroPrintBody">
+                <img id="imgPr2" src="${esc(LOGO_URL)}" alt="Logo">
+                <div id="adver">
+                    <div id="fact">
+                        <h4 class="marNon strCent">EXIJA SU</h4>
+                        <h1 class="marNon strCent">FACTURA</h1>
+                    </div>
+                    <div><h3>ESTE BOLETO CONSTITUYE RESERVA DE PASAJE</h3></div>
+                </div>
+                <div><h3 id="dtP" class="cien">De SC a: ${esc(datos.dt)}</h3></div>
+                <div><h3 id="nmP" class="cien big">NOMBRE: </h3></div>
+                <div><h3 class="ciPr big">CI/CEL: </h3></div>
+                <div>
+                    <h3 class="pl">PLACA: </h3>
+                    <h3 class="ca">CARRIL: ${esc(datos.ca)}</h3>
+                </div>
+                <div>
+                    <h3 id="fechaPrint" class="big">FECHA: ${esc(datos.fe)}</h3>
+                    <h3 id="hrP" class="big">HORA: </h3>
+                </div>
+                <div>
+                    <h3 id="prP" class="big">PRECIO: </h3>
+                    <h3 id="asP" class="big">ASIENTO: </h3>
+                </div>
+                <div><h3 id="emP" class="big">EMITIDO POR: </h3></div>
+                <h1 id="bv">¡¡BUEN VIAJE!!</h1>
+                <p id="msj">AVISE 3 HRS ANTES DE ABORDAR EL BUS EN CASO DE DEVOLUCION<br>No valido para credito fiscal.</p>
+            </div>
+        `;
+
+        let html = '';
+        for (let i = 0; i < numTickets; i++) {
+            html += ticketHTML;
+            if (i < numTickets - 1) {
+                html += '<div style="page-break-after: always;"></div>';
+            }
+        }
+        imprimirHTML({ win, titulo: 'Ticket vacío', cssHref: PRINT_CSS_HREF, cssCritico: PRINT_CSS_CRITICO, html });
     } else if (codP == -2) {
-        const descuento = prompt(`¿CUANTO ES EL DESCUENTO?`, "1");
-        
+        const descuento = prompt(`CUANTO ES EL DESCUENTO?`, "1");
         if (descuento === null) return;
         const descu = parseInt(descuento);
         if (isNaN(descu) || descu <= 0) {
             alert("Por favor ingresa un descuento valido");
             return;
         }
-        const ticketHTML = `
-            <div id="pasajeroPrintBody">
-                <img id="imgPr2" src="img/logXXF.png" alt="Logo">
-                <div id="detalle">
-                    <h3 class="botBor lefty">DETALLE DE PASAJES</h3>
-                    <div id="precios"  class="botBor lefty"></div>
-                    <h3 id="totalText" class="righty">TOTAL: </h3>
-                </div>
-                <br>
-                <div><h3 id="descue" class="marNon">DESCUENTO..............................</h3></div>
-                <div><h3 id="saldo" class="marNon lefty">SALDO: </h3></div>
-                <h3 class="blank">---</h3>
-            </div>
-        `;
 
-        document.getElementById('printPasajero').style.display = 'block';
-        document.getElementById("printPasajero").innerHTML = '';
-
-        const ticketDiv = document.createElement('div');
-        ticketDiv.innerHTML = ticketHTML;
-        document.getElementById("printPasajero").appendChild(ticketDiv);
+        const codR = new URLSearchParams(window.location.search).get('codR');
+        const win = abrirHojaImpresion({ ancho: 900, alto: 900, titulo: 'Detalle' });
+        if (!win) {
+            alert("Permite las ventanas emergentes e intenta de nuevo.");
+            return;
+        }
 
         fetch(`php/common/getPasajeros.php?codR=${encodeURIComponent(codR)}`)
             .then(response => response.json())
             .then(data => {
                 let total = 0;
-                const preciosDiv = document.getElementById('precios');
-
                 const grouped = data.reduce((acc, pasajero) => {
-                const precio = parseFloat(pasajero.precio) || 0;
-                acc[precio] = (acc[precio] || 0) + 1;
-                total += precio;
-                return acc;
-            }, {});
+                    const precio = parseFloat(pasajero.precio) || 0;
+                    acc[precio] = (acc[precio] || 0) + 1;
+                    total += precio;
+                    return acc;
+                }, {});
 
-            Object.entries(grouped).forEach(([precio, cantidad]) => {
-                const resultado = cantidad * precio;
-                const h3 = document.createElement('h3');
-                h3.textContent = `${cantidad} * ${precio} Bs = ${resultado} Bs`;
-                preciosDiv.appendChild(h3);
+                const preciosHTML = Object.entries(grouped).map(([precio, cantidad]) => {
+                    const resultado = cantidad * precio;
+                    return `<h3>${esc(cantidad)} * ${esc(precio)} Bs = ${esc(resultado)} Bs</h3>`;
+                }).join('');
+
+                const saldo = total - descu;
+                const html = `
+                    <div id="pasajeroPrintBody">
+                        <img id="imgPr2" src="${esc(LOGO_URL)}" alt="Logo">
+                        <div id="detalle">
+                            <h3 class="botBor lefty">DETALLE DE PASAJES</h3>
+                            <div id="precios" class="botBor lefty">${preciosHTML}</div>
+                            <h3 id="totalText" class="righty">TOTAL: ${esc(total)} Bs</h3>
+                        </div>
+                        <br>
+                        <div><h3 id="descue" class="marNon">DESCUENTO:...${esc(descu)}.Bs..................</h3></div>
+                        <div><h3 id="saldo" class="marNon lefty">SALDO: ${esc(saldo)} Bs</h3></div>
+                        <h3 class="blank">---</h3>
+                    </div>
+                `;
+                imprimirHTML({ win, titulo: 'Detalle', cssHref: PRINT_CSS_HREF, cssCritico: PRINT_CSS_CRITICO, html });
+            })
+            .catch(error => {
+                console.error('Error al obtener los pasajeros:', error);
+                alert("Error al cargar los pasajeros");
+                try { win.close(); } catch (e) {}
             });
-            document.getElementById('totalText').textContent = `TOTAL: ${total} Bs`;
-
-            let saldo = total - descu;
-            document.getElementById('descue').textContent= `DESCUENTO:...${descu}.Bs..................`;
-            document.getElementById('saldo').textContent= `SALDO: ${saldo} Bs`;
-            const img = new Image();
-            img.src = 'img/logXXF.png';
-            img.onload = () => {
-                document.querySelectorAll('#imgPr2').forEach(imgEl => imgEl.src = img.src);
-                setTimeout(() => {
-                    window.print();
-                    document.getElementById('printPasajero').style.display = 'none';
-                }, 200);
-            };
-            img.onerror = () => {
-                console.error("No se pudo cargar la imagen");
-                window.print();
-                document.getElementById('printPasajero').style.display = 'none';
-            };
-        })
-    .catch(error => {
-        console.error('Error al obtener los pasajeros:', error);
-        const contenedor = document.getElementById('dinamic');
-        contenedor.innerHTML = '<h3 style="width: 100%;">Error al cargar los pasajeros</h3>';
-    });
-
-} else {
-
-        // SOLO AQUÍ AGREGAMOS EL MODAL PARA TICKETS INDIVIDUALES
+    } else {
         showPrintOptionsModal(codP, datos);
     }
 }
 
-// Función para mostrar el modal de opciones de impresión (SOLO PARA TICKETS INDIVIDUALES)
 function showPrintOptionsModal(codP, datos) {
     const modal = document.createElement('div');
     modal.id = 'printOptionsModal';
-    modal.style.position = 'fixed';
-    modal.style.top = '0';
-    modal.style.left = '0';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
-    modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
-    modal.style.display = 'flex';
-    modal.style.justifyContent = 'center';
-    modal.style.alignItems = 'center';
-    modal.style.zIndex = '1000';
-    
+    modal.className = 'print-options-overlay';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'printOptionsTitle');
+
     modal.innerHTML = `
-        <div style="background: white; padding: 20px; border-radius: 10px; width: 300px; text-align: center;">
-            <h2 style="margin-top: 0;">Opciones de Impresión</h2>
+        <div class="print-options-card">
+            <h2 id="printOptionsTitle">Opciones de Impresión</h2>
             <p>Seleccione el formato de impresión:</p>
-            <button id="printFull" class="print-option-btn">COMPLETO</button>
-            <button id="printPrice" class="print-option-btn">SOLO PRECIO</button>
-            <button id="printTime" class="print-option-btn">SOLO HORA</button>
-            <button id="printEmpty" class="print-option-btn">VACÍO</button>
-            <button id="printCancel" class="print-option-btn cancel-btn">CANCELAR</button>
+            <div class="print-options-actions">
+                <button id="printFull" class="print-option-btn">COMPLETO</button>
+                <button id="printPrice" class="print-option-btn">SOLO PRECIO</button>
+                <button id="printTime" class="print-option-btn">SOLO HORA</button>
+                <button id="printEmpty" class="print-option-btn">VACIO</button>
+                <button id="printCancel" class="print-option-btn cancel-btn">CANCELAR</button>
+            </div>
         </div>
     `;
-    
+
     document.body.appendChild(modal);
     document.body.style.overflow = 'hidden';
-    
-    // Configurar botones del modal
-    document.getElementById('printFull').addEventListener('click', () => {
+
+    const firstOption = modal.querySelector('.print-option-btn');
+    if (firstOption) firstOption.focus();
+
+    const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+            if (modal.parentNode) document.body.removeChild(modal);
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleEscape);
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
+
+    const openAndPrint = (option) => {
         document.body.removeChild(modal);
         document.body.style.overflow = '';
-        printIndividualTicket(codP, datos, 'full');
-    });
-    
-    document.getElementById('printPrice').addEventListener('click', () => {
-        document.body.removeChild(modal);
-        document.body.style.overflow = '';
-        printIndividualTicket(codP, datos, 'price');
-    });
-    
-    document.getElementById('printTime').addEventListener('click', () => {
-        document.body.removeChild(modal);
-        document.body.style.overflow = '';
-        printIndividualTicket(codP, datos, 'time');
-    });
-    
-    document.getElementById('printEmpty').addEventListener('click', () => {
-        document.body.removeChild(modal);
-        document.body.style.overflow = '';
-        printIndividualTicket(codP, datos, 'empty');
-    });
-    
+        const win = abrirHojaImpresion({ ancho: 900, alto: 900, titulo: 'Ticket' });
+        if (!win) {
+            alert("Permite las ventanas emergentes e intenta de nuevo.");
+            return;
+        }
+        printIndividualTicket(codP, datos, option, win);
+    };
+
+    document.getElementById('printFull').addEventListener('click', () => openAndPrint('full'));
+    document.getElementById('printPrice').addEventListener('click', () => openAndPrint('price'));
+    document.getElementById('printTime').addEventListener('click', () => openAndPrint('time'));
+    document.getElementById('printEmpty').addEventListener('click', () => openAndPrint('empty'));
+
     document.getElementById('printCancel').addEventListener('click', () => {
         document.body.removeChild(modal);
         document.body.style.overflow = '';
     });
-    
+
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             document.body.removeChild(modal);
@@ -633,13 +544,7 @@ function showPrintOptionsModal(codP, datos) {
     });
 }
 
-// Función para imprimir ticket individual según la opción seleccionada
-function printIndividualTicket(codP, datos, option) {
-    const printPasajero = document.getElementById('printPasajero');
-    printPasajero.style.display = 'none';
-    printPasajero.innerHTML = '';
-
-    // Buscar el pasajero específico
+function printIndividualTicket(codP, datos, option, win) {
     const pasajeros = document.querySelectorAll("#dinamic .pasajero");
     let pasajeroEncontrado = null;
 
@@ -657,74 +562,45 @@ function printIndividualTicket(codP, datos, option) {
 
     if (!pasajeroEncontrado) {
         alert("No se encontró el pasajero especificado");
+        if (win) { try { win.close(); } catch (e) {} }
         return;
     }
 
-    // Generar el ticket según la opción seleccionada
-    printPasajero.innerHTML = `
+    const html = `
         <div id="pasajeroPrintBody">
-            <img id="imgPr2" src="img/logXXF.png" alt="Logo" onerror="this.style.display='none'">
+            <img id="imgPr2" src="${esc(LOGO_URL)}" alt="Logo">
             <div id="adver">
                 <div id="fact">
                     <h4 class="marNon strCent">EXIJA SU</h4>
                     <h1 class="marNon strCent">FACTURA</h1>
                 </div>
-                <div>
-                    <h3>ESTE BOLETO CONSTITUYE RESERVA DE PASAJE</h3>
-                </div>
+                <div><h3>ESTE BOLETO CONSTITUYE RESERVA DE PASAJE</h3></div>
+            </div>
+            <div><h3 id="dtP" class="cien">De SC a: ${esc(datos.dt)}</h3></div>
+            <div><h3 id="nmP" class="cien">NOMBRE: ${esc(pasajeroEncontrado.nombre)}</h3></div>
+            <div><h3 class="ciPr">CI/CEL: ${esc(pasajeroEncontrado.ci)}</h3></div>
+            <div>
+                <h3 class="pl">PLACA: ${esc(datos.pl)}</h3>
+                <h3 class="ca">CARRIL: ${esc(datos.ca)}</h3>
             </div>
             <div>
-                <h3 id="dtP" class="cien">De SC a: ${datos.dt}</h3>
+                <h3 id="fechaPrint">FECHA: ${esc(datos.fe)}</h3>
+                <h3 id="hrP">HORA: ${option === 'full' || option === 'time' ? esc(datos.hr) : ''}</h3>
             </div>
             <div>
-                <h3 id="nmP" class="cien">NOMBRE: ${pasajeroEncontrado.nombre}</h3>    
+                <h3 id="prP">PRECIO: ${option === 'full' || option === 'price' ? esc(pasajeroEncontrado.precio) : ''}</h3>
+                <h3 id="asP">ASIENTO: ${esc(pasajeroEncontrado.asiento)}</h3>
             </div>
-            <div>
-                <h3 class="ciPr">CI/CEL: ${pasajeroEncontrado.ci}</h3>
-            </div>
-            <div>
-                <h3 class="pl">PLACA: ${datos.pl}</h3>
-                <h3 class="ca">CARRIL: ${datos.ca}</h3>
-            </div>
-            <div>
-                <h3 id="fechaPrint">FECHA: ${datos.fe}</h3> 
-                <h3 id="hrP">HORA: ${option === 'full' || option === 'time' ? datos.hr : ''}</h3> 
-            </div>
-            <div>
-                <h3 id="prP">PRECIO: ${option === 'full' || option === 'price' ? pasajeroEncontrado.precio : ''}</h3>
-                <h3 id="asP">ASIENTO: ${pasajeroEncontrado.asiento}</h3>
-            </div>
-            <div>
-                <h3 id="emP" class="big">EMITIDO POR: </h3>
-            </div>
+            <div><h3 id="emP" class="big">EMITIDO POR: </h3></div>
             <h1 id="bv">¡¡BUEN VIAJE!!</h1>
-            <p id="msj">AVISE 3 HRS ANTES DE ABORDAR EL BUS EN CASO DE DEVOLUCION<br>
-                No valido para credito fiscal.
-            </p>
+            <p id="msj">AVISE 3 HRS ANTES DE ABORDAR EL BUS EN CASO DE DEVOLUCION<br>No valido para credito fiscal.</p>
         </div>
     `;
 
-    printPasajero.style.display = 'block';
-
-    // Precargar imagen
-    const img = new Image();
-    img.src = 'img/logXXF.png';
-    img.onload = function() {
-        document.getElementById("imgPr2").src = img.src;
-        setTimeout(() => {
-            window.print();
-            printPasajero.style.display = 'none';
-        }, 500);
-    };
-    img.onerror = function() {
-        setTimeout(() => {
-            window.print();
-            printPasajero.style.display = 'none';
-        }, 500);
-    };
+    imprimirHTML({ win, titulo: 'Ticket', cssHref: PRINT_CSS_HREF, cssCritico: PRINT_CSS_CRITICO, html });
 }
+
 function printOrdenSalida() {
-    const printReporte = document.getElementById('printReporte');
     const datos = {
         c1: document.getElementById("c1").textContent,
         c2: document.getElementById("c2").textContent,
@@ -736,67 +612,45 @@ function printOrdenSalida() {
         hr: document.getElementById("hr").textContent,
         marca: document.getElementById("marca").textContent
     };
-    printReporte.style.display = 'none';
-    printReporte.innerHTML = '';
 
-    const template = `
+    const win = abrirHojaImpresion({ preset: 'a4', titulo: 'Orden de salida' });
+    if (!win) {
+        alert("Permite las ventanas emergentes e intenta de nuevo.");
+        return;
+    }
+
+    const copyHTML = `
         <div class="os-copy">
             <div class="os-content">
                 <div class="os-header">
-                    <img class="os-logo" src="img/logXXF.png" alt="Logo">
+                    <img class="os-logo" src="${esc(LOGO_URL)}" alt="Logo">
                     <h2 class="os-salida">ORDEN DE SALIDA</h2>
                 </div>
                 <div class="os-body">
                     <div class="os-left">
-                        <h4>CONDUCTOR:<span>..</span>${datos.c1}<span>..</span></h4>
-                        <h4>CONDUCTOR:<span>..</span>${datos.c2}<span>..</span></h4>
-                        <h4>MARCA:<span>..</span>${datos.marca}<span>..</span></h4>
-                        <h4>DESTINO:<span>..</span>${datos.dt}<span>..</span></h4>
+                        <h4>CONDUCTOR:<span>..</span>${esc(datos.c1)}<span>..</span></h4>
+                        <h4>CONDUCTOR:<span>..</span>${esc(datos.c2)}<span>..</span></h4>
+                        <h4>MARCA:<span>..</span>${esc(datos.marca)}<span>..</span></h4>
+                        <h4>DESTINO:<span>..</span>${esc(datos.dt)}<span>..</span></h4>
                     </div>
                     <div class="os-right">
-                        <h4>BREVET:${datos.l1}</h4>
-                        <h4>BREVET:${datos.l2}</h4>
-                        <h4>PLACA:${datos.pl}</h4>
-                        <h4>HR.SALIDA:${datos.hr}</h4>
+                        <h4>BREVET:${esc(datos.l1)}</h4>
+                        <h4>BREVET:${esc(datos.l2)}</h4>
+                        <h4>PLACA:${esc(datos.pl)}</h4>
+                        <h4>HR.SALIDA:${esc(datos.hr)}</h4>
                     </div>
                 </div>
-                <h5 class="os-fecha">..SANTA..CRUZ.....${datos.fe}..</h5>
+                <h5 class="os-fecha">..SANTA..CRUZ.....${esc(datos.fe)}..</h5>
                 <div class="os-signatures">
                     <h4 class="os-sig">Administrador</h4>
-                    <h4 class="os-sig">V°B° JEFE SECC. TECNICA</h4>
+                    <h4 class="os-sig">VºBº JEFE SECC. TECNICA</h4>
                 </div>
             </div>
         </div>
     `;
 
-    for (let i = 0; i < 2; i++) {
-        const div = document.createElement('div');
-        div.innerHTML = template;
-        printReporte.appendChild(div);
-        if (i < 1) {
-            const brk = document.createElement('div');
-            brk.style.pageBreakAfter = 'always';
-            printReporte.appendChild(brk);
-        }
-    }
-
-    printReporte.style.display = 'block';
-
-    const img = new Image();
-    img.src = 'img/logXXF.png';
-    img.onload = function() {
-        document.querySelectorAll('.os-logo').forEach(el => el.src = img.src);
-        setTimeout(() => {
-            window.print();
-            printReporte.style.display = 'none';
-        }, 200);
-    };
-    img.onerror = function() {
-        setTimeout(() => {
-            window.print();
-            printReporte.style.display = 'none';
-        }, 200);
-    };
+    const html = copyHTML.replace('<div class="os-copy">', '<div class="os-copy" style="page-break-after: always;">') + copyHTML;
+    imprimirHTML({ win, titulo: 'Orden de salida', cssHref: PRINT_CSS_HREF, cssCritico: PRINT_CSS_CRITICO, html });
 }
 function del() {
     const confirmacion = confirm("¿Estás seguro de que deseas eliminar este reporte?");

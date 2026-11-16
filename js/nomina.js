@@ -89,6 +89,11 @@ function resetPlaca() {
     document.getElementById('placa').value = '';
     document.getElementById('placa').placeholder = '';
     document.getElementById('pl-input').focus();
+    const sm = document.getElementById('seatMap');
+    if (sm) sm.innerHTML = '';
+    window.reservadosSeleccionados = new Set();
+    const ar = document.getElementById('asientos_reservados');
+    if (ar) ar.value = '';
 }
 
 async function onPlacaSelect(placa) {
@@ -119,6 +124,7 @@ async function onPlacaSelect(placa) {
         document.getElementById('ay').value = '';
         document.getElementById('placa').value = '';
         document.getElementById('placa').placeholder = flota.nombre_planilla || '';
+        if (flota.nombre_planilla) renderSeatMap(flota.nombre_planilla);
 
         const params = new URLSearchParams(window.location.search);
         const fechaParam = params.get("fecha");
@@ -218,6 +224,10 @@ async function save() {
         for (let key in campos) {
             formData.append(key, campos[key]);
         }
+        formData.append('reservas', document.getElementById('reservas')?.checked ? '1' : '0');
+        const reservadosInput = document.getElementById('asientos_reservados').value.trim();
+        const reservadosFinal = reservadosInput || Array.from(window.reservadosSeleccionados || []).join(',');
+        formData.append('asientos_reservados', reservadosFinal);
 
         const response = await fetch('php/nomina/nuevaNomina.php', {
             method: 'POST',
@@ -252,11 +262,116 @@ function actHora() {
     document.getElementById('hora').textContent = ahora.toLocaleTimeString('es-ES', opcionesHora);
 }
 
+window.reservadosSeleccionados = window.reservadosSeleccionados || new Set();
+
+async function renderSeatMap(planillaNombre) {
+    const container = document.getElementById('seatMapModal');
+    if (!container) return;
+    container.innerHTML = '';
+    try {
+        const res = await fetch(`php/common/getBus.php?nombre=${encodeURIComponent(planillaNombre)}`);
+        const data = await res.json();
+        if (!Array.isArray(data)) return;
+
+        const seatSize = 36;
+        const seats = data.filter(i => i.tipo === 'asiento');
+        const maxPosX = seats.reduce((m, i) => Math.max(m, parseInt(i.posX) || 0), 0);
+        const maxPosY = seats.reduce((m, i) => Math.max(m, parseInt(i.posY) || 0), 0);
+        const availableWidth = container.clientWidth || container.offsetWidth || 0;
+        const availableHeight = container.clientHeight || container.offsetHeight || 0;
+        let factorX = (availableWidth > 0 && maxPosX > 0) ? ((availableWidth - seatSize) / maxPosX) : 1;
+        let factorY = (availableHeight > 0 && maxPosY > 0) ? ((availableHeight - seatSize) / maxPosY) : 1;
+        let factor = Math.min(factorX, factorY, 1);
+        if (!isFinite(factor) || factor <= 0) factor = 0.82;
+
+        data.forEach(item => {
+            if (item.tipo !== 'asiento') return;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = item.numAs;
+            btn.style.position = 'absolute';
+            btn.style.left = Math.round((parseInt(item.posX) || 0) * factor) + 'px';
+            btn.style.top = Math.round((parseInt(item.posY) || 0) * factor) + 'px';
+            btn.className = window.reservadosSeleccionados.has(String(item.numAs)) ? 'seat-reservado' : 'seat-libre';
+            btn.addEventListener('click', () => {
+                const key = String(item.numAs);
+                if (window.reservadosSeleccionados.has(key)) {
+                    window.reservadosSeleccionados.delete(key);
+                    btn.className = 'seat-libre';
+                } else {
+                    window.reservadosSeleccionados.add(key);
+                    btn.className = 'seat-reservado';
+                }
+                updateModalCount();
+            });
+            container.appendChild(btn);
+        });
+        updateModalCount();
+    } catch (e) {
+        console.error('Error cargando mapa de asientos', e);
+    }
+}
+
+function updateModalCount() {
+    const el = document.getElementById('modalCount');
+    if (el) el.textContent = window.reservadosSeleccionados.size;
+}
+
+function closeModal() {
+    const modal = document.getElementById('modalReservas');
+    if (modal) modal.style.display = 'none';
+}
+
 window.onload = () => {
     loadDatalists();
     actHora();
     setInterval(actHora, 1000);
     setupChoferAutocomplete();
+
+    const reservasCb = document.getElementById('reservas');
+    const btnReservas = document.getElementById('btnReservas');
+    const modal = document.getElementById('modalReservas');
+
+    function updateBtn() {
+        if (reservasCb.checked) {
+            btnReservas.disabled = false;
+            btnReservas.classList.add('enabled');
+        } else {
+            btnReservas.disabled = true;
+            btnReservas.classList.remove('enabled');
+            if (modal) modal.style.display = 'none';
+            window.reservadosSeleccionados.clear();
+            const hidden = document.getElementById('asientos_reservados');
+            if (hidden) hidden.value = '';
+        }
+    }
+    if (reservasCb) reservasCb.addEventListener('change', updateBtn);
+    updateBtn();
+
+    if (btnReservas) {
+        btnReservas.addEventListener('click', () => {
+            if (btnReservas.disabled) return;
+            const planilla = document.getElementById('placa').placeholder;
+            if (!planilla) {
+                alert('Seleccione una placa primero');
+                return;
+            }
+            if (modal) modal.style.display = 'flex';
+            renderSeatMap(planilla);
+        });
+    }
+    const closeBtn = document.getElementById('modalClose');
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    const cancelBtn = document.getElementById('modalCancel');
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    const confirmBtn = document.getElementById('modalConfirm');
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+            const hidden = document.getElementById('asientos_reservados');
+            if (hidden) hidden.value = Array.from(window.reservadosSeleccionados).join(',');
+            closeModal();
+        });
+    }
 
     document.getElementById('pl-input').addEventListener('change', function() {
         onPlacaSelect(this.value.trim());

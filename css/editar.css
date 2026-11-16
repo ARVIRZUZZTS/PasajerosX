@@ -147,8 +147,16 @@ input[type=number]::-webkit-outer-spin-button {
 .asOcu {
     background-color: red;
 }
+.asBloq {
+    background-color: #ff4d4d;
+    cursor: not-allowed;
+}
 .asLib {
     background-color: #4CAF50;
+}
+.asiento-rojo {
+    border: 2px solid red !important;
+    background-color: #ffe6e6 !important;
 }
 .extra {
   position: absolute;

@@ -21,7 +21,7 @@ try {
             continue;
         }
 
-        $sql = "UPDATE persona SET 
+        $sql = "UPDATE pasajeros SET 
                 asiento = ?, 
                 nombre = ?, 
                 ci = ?, 

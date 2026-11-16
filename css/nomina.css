@@ -84,7 +84,6 @@ input {
 }
 .card-section {
     margin-bottom: 25px;
-    padding-bottom: 25px;
     border-bottom: 1px solid #eee;
 }
 .card-section:last-child {
@@ -170,3 +169,133 @@ main {
 #carr5 {
     text-align: center;
 }
+
+/* Reservas toggle */
+.reserva-toggle-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+.reserva-toggle {
+    width: 22px;
+    height: 22px;
+    accent-color: #0a1f44;
+    cursor: pointer;
+}
+.btn-reservas {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 5px;
+    background: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+.btn-reservas.enabled {
+    background: #0a1f44;
+    color: #fff;
+    cursor: pointer;
+}
+.btn-reservas.enabled:hover {
+    background: #003591;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.modal-card {
+    background: #fff;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 450px;
+    height: min-content;
+    max-height: none;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #0a1f44;
+    color: #fff;
+    border-radius: 10px 10px 0 0;
+}
+.modal-header h3 { margin: 0; font-size: 18px; }
+.modal-close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+}
+.modal-body {
+    padding: 20px;
+    overflow: visible;
+    flex: 1;
+}
+.seat-map-modal {
+    position: relative;
+    min-height: 200px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f9f9f9;
+    height: 60vh;
+    overflow: hidden;
+}
+.seat-map-modal button {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #999;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+}
+.seat-libre { background: #eee; }
+.seat-libre:hover { background: #4CAF50; color: #fff; }
+.seat-reservado { background: #ff4d4d; color: #fff; }
+.modal-count { margin: 0; font-weight: bold; color: #0a1f44; }
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+}
+.modal-actions {
+    display: flex;
+    gap: 10px;
+}
+.btn-cancel {
+    padding: 10px 16px;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.btn-confirm {
+    padding: 10px 16px;
+    border: none;
+    background: #4CAF50;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.btn-confirm:hover { background: #388E3C; }

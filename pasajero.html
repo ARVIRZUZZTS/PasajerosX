@@ -3,40 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <title>NUEVO PASAJERO</title>
-    <link rel="stylesheet" href="css/pasajero.css">    
-<link rel="stylesheet" href="css/layout2.css"></head>
+    <link rel="stylesheet" href="css/pasajero.css">
+    <link rel="stylesheet" href="css/print-options.css">
+    <link rel="stylesheet" href="css/layout2.css">
+</head>
 <body>
     <div id="app-header"></div>
 
     <div class="flex">
         <div id="app-sidebar"></div>
         <main>
-
-        <div id="superBus">
-            <div id="bus"></div>
-        </div>
-        <div id="lista">
-            <div id="title"></div>
-            <div id="allDina">
-		        <div id="dinamic"></div>
-                <div class="flexiDat">
-                    <h2>PRECIO POR ASIENTO:</h2>
-                    <input type="number" placeholder="PRECIO" name="pr" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g, '')" list="l2-list" required>
+            <div class="card bus-card">
+                <div id="superBus">
+                    <div id="bus"></div>
                 </div>
-                <div class="flexiDat">
-                    <h2>DESTINO:</h2>
-                    <input id="dest" type="text" placeholder="DESTINO" name="ds" maxlength="25">
-                </div>
-                <div class="flexiDat">
-                    <h2>ASIENTO:</h2>
-                    <input id="asH" type="text" placeholder="ASIENTO" name="as" oninput="this.value = this.value.replace(/[^0-9]/g, ',')" list="l2-list" autocomplete="off">
-                </div>                    
             </div>
-    </main>
-    </div>
-    </div>
-    <div id="printP" style="display: none;"></div>
 
+            <div class="card form-card">
+                <div id="lista">
+                    <div id="title"></div>
+                    <div class="lista-body">
+                        <div id="allDina">
+                            <div id="dinamic"></div>
+                        </div>
+                        <div class="form-fields">
+                            <div class="field-row">
+                                <div class="field">
+                                    <label>PRECIO POR ASIENTO</label>
+                                    <input type="number" placeholder="PRECIO" name="pr" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g, '')" list="l2-list" required>
+                                </div>
+                            </div>
+                            <div class="field-row">
+                                <div class="field">
+                                    <label>DESTINO</label>
+                                    <input id="dest" type="text" placeholder="DESTINO" name="ds" maxlength="25">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="asiento-section">
+                        <div class="field">
+                            <label>ASIENTO</label>
+                            <input id="asH" type="text" placeholder="ASIENTO" name="as" oninput="this.value = this.value.replace(/[^0-9]/g, ',')" list="l2-list" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
     <script>
         window.PAGE_TITLE = "NUEVO PASAJERO";
         window.PAGE_BUTTONS = [
@@ -45,6 +59,7 @@
         ];
     </script>
     <script src="components/layout.js"></script>
+    <script src="js/print/imprimirHoja.js"></script>
     <script src="js/pasajero.js"></script>
 </body>
 </html>

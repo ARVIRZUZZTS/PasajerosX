@@ -23,7 +23,7 @@ try {
     // Crear una lista de placeholders para la consulta preparada
     $placeholders = implode(',', array_fill(0, count($pasajeros), '?'));
     
-    $sql = "DELETE FROM persona WHERE codR = ? AND codP IN ($placeholders)";
+    $sql = "DELETE FROM pasajeros WHERE codR = ? AND codP IN ($placeholders)";
     $stmt = $conexion->prepare($sql);
 
     if (!$stmt) {

@@ -106,7 +106,7 @@ async function crear() {
                 datos.append("fecha", fecha);
                 if (dt !== "n") datos.append("codR", codR);
                 
-                return fetch("php/pasajero/nuevaPersona.php", {
+                return fetch("php/pasajero/nuevaPasajero.php", {
                     method: "POST",
                     body: datos
                 }).then(res => res.json());
@@ -368,40 +368,60 @@ async function cargarDisenoBus(placa) {
     }
 }
 
+function redirectAfterPrint() {
+    const params = new URLSearchParams(window.location.search);
+    const fechaParam = params.get("fecha");
+    const fecha = encodeURIComponent(fechaParam);
+
+    if (c1 == "n") {
+        window.location = `diario.html?fecha=${fecha}`;
+    } else {
+        window.location = `ver.html?codR=${codR}&fecha=${fecha}`;
+    }
+}
+
 function printy(event) {
     if (event && event.preventDefault) {
         event.preventDefault();
     }
-    
+
     const modal = document.createElement('div');
     modal.id = 'printOptionsModal';
-    modal.style.position = 'fixed';
-    modal.style.top = '0';
-    modal.style.left = '0';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
-    modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
-    modal.style.display = 'flex';
-    modal.style.justifyContent = 'center';
-    modal.style.alignItems = 'center';
-    modal.style.zIndex = '1000';
-    
+    modal.className = 'print-options-overlay';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'printOptionsTitle');
+
     modal.innerHTML = `
-        <div style="background: white; padding: 20px; border-radius: 10px; width: 300px; text-align: center;">
-            <h2 style="margin-top: 0;">Opciones de Impresión</h2>
+        <div class="print-options-card">
+            <h2 id="printOptionsTitle">Opciones de Impresión</h2>
             <p>Seleccione el formato de impresión:</p>
-            <button id="printFull" class="print-option-btn">COMPLETO</button>
-            <button id="printPrice" class="print-option-btn">SOLO PRECIO</button>
-            <button id="printTime" class="print-option-btn">SOLO HORA</button>
-            <button id="printEmpty" class="print-option-btn">VACÍO</button>
-            <button id="printGroup" class="print-option-btn">GRUPAL</button>
-            <button id="printCancel" class="print-option-btn cancel-btn">CANCELAR</button>
+            <div class="print-options-actions">
+                <button id="printFull" class="print-option-btn">COMPLETO</button>
+                <button id="printPrice" class="print-option-btn">SOLO PRECIO</button>
+                <button id="printTime" class="print-option-btn">SOLO HORA</button>
+                <button id="printEmpty" class="print-option-btn">VACÍO</button>
+                <button id="printGroup" class="print-option-btn">GRUPAL</button>
+                <button id="printCancel" class="print-option-btn cancel-btn">CANCELAR</button>
+            </div>
         </div>
     `;
-    
+
     document.body.appendChild(modal);
     document.body.style.overflow = 'hidden';
-    
+
+    const firstOption = modal.querySelector('.print-option-btn');
+    if (firstOption) firstOption.focus();
+
+    const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+            if (modal.parentNode) document.body.removeChild(modal);
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleEscape);
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
+
     const setupButton = (id, option) => {
         const btn = document.getElementById(id);
         btn.addEventListener('click', (e) => {
@@ -417,28 +437,28 @@ function printy(event) {
             }
         });
     };
-    
+
     setupButton('printFull', 'full');
     setupButton('printPrice', 'price');
     setupButton('printTime', 'time');
     setupButton('printEmpty', 'empty');
     setupButton('printGroup', 'group');
-    
+
     document.getElementById('printCancel').addEventListener('click', () => {
         document.body.removeChild(modal);
         document.body.style.overflow = '';
-        
+
         const params = new URLSearchParams(window.location.search);
         const fechaParam = params.get("fecha");
         const fecha = encodeURIComponent(fechaParam);
-        
+
         if (c1 == "n") {
             window.location = `diario.html?fecha=${fecha}`;
         } else {
             window.location = `ver.html?codR=${codR}&fecha=${fecha}`;
         }
     });
-    
+
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             document.body.removeChild(modal);
@@ -450,28 +470,37 @@ function printy(event) {
 function showGroupNameInput() {
     const groupModal = document.createElement('div');
     groupModal.id = 'groupNameModal';
-    groupModal.style.position = 'fixed';
-    groupModal.style.top = '0';
-    groupModal.style.left = '0';
-    groupModal.style.width = '100%';
-    groupModal.style.height = '100%';
-    groupModal.style.backgroundColor = 'rgba(0,0,0,0.7)';
-    groupModal.style.display = 'flex';
-    groupModal.style.justifyContent = 'center';
-    groupModal.style.alignItems = 'center';
-    groupModal.style.zIndex = '1000';
-    
+    groupModal.className = 'print-options-overlay';
+    groupModal.setAttribute('role', 'dialog');
+    groupModal.setAttribute('aria-modal', 'true');
+    groupModal.setAttribute('aria-labelledby', 'groupNameTitle');
+
     groupModal.innerHTML = `
-        <div style="background: white; border-radius: 10px; width: 300px; text-align: center;">
-            <h2 style="margin-top: 20px;">Nombre Grupal</h2>
-            <input type="text" id="groupNameInput" placeholder="NOMBRE GRUPAL" style="padding: 8px; margin-bottom: 15px;" maxlength="30">
-            <button id="confirmGroupPrint" class="print-option-btn">CONFIRMAR</button>
-            <button id="cancelGroupPrint" class="print-option-btn cancel-btn">CANCELAR</button>
+        <div class="print-options-card">
+            <h2 id="groupNameTitle">Nombre Grupal</h2>
+            <input type="text" id="groupNameInput" placeholder="NOMBRE GRUPAL" maxlength="30">
+            <div class="print-options-actions">
+                <button id="confirmGroupPrint" class="print-option-btn">CONFIRMAR</button>
+                <button id="cancelGroupPrint" class="print-option-btn cancel-btn">CANCELAR</button>
+            </div>
         </div>
     `;
-    
+
     document.body.appendChild(groupModal);
-    
+    document.body.style.overflow = 'hidden';
+
+    const groupInput = document.getElementById('groupNameInput');
+    if (groupInput) groupInput.focus();
+
+    const handleGroupEscape = (e) => {
+        if (e.key === 'Escape') {
+            if (groupModal.parentNode) document.body.removeChild(groupModal);
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleGroupEscape);
+        }
+    };
+    document.addEventListener('keydown', handleGroupEscape);
+
     document.getElementById('confirmGroupPrint').addEventListener('click', () => {
         const groupName = document.getElementById('groupNameInput').value.trim();
         if (groupName) {
@@ -481,12 +510,13 @@ function showGroupNameInput() {
             alert('Por favor ingrese un nombre grupal');
         }
     });
-    
+
     document.getElementById('cancelGroupPrint').addEventListener('click', () => {
         document.body.removeChild(groupModal);
-        printy(); // Volver a mostrar el modal anterior
+        printy();
     });
 }
+
 function printTicket(option, groupName = '') {
     const fe = document.getElementById("fecha").textContent;
     const fecha = fe.split(": ")[1];
@@ -503,67 +533,19 @@ function printTicket(option, groupName = '') {
         }
     }
 
-    const printContainer = document.getElementById('printP');
-    printContainer.style.display = 'block';
-    printContainer.innerHTML = '';
+    const win = window.abrirHojaImpresion({ ancho: 900, alto: 900, titulo: 'Ticket' });
+    if (!win) {
+        alert('Permite las ventanas emergentes e intenta de nuevo.');
+        return;
+    }
+
+    let html = '';
 
     if (option === 'group') {
-        // Impresión grupal - solo un ticket
-        const ticketDiv = document.createElement('div');
-        ticketDiv.className = 'pasajeroPrintBody';
-        
-        // Ordenar los asientos numéricamente
         const sortedAsientos = [...asientosSeleccionados].sort((a, b) => parseInt(a) - parseInt(b));
-        
-        ticketDiv.innerHTML = `
-            <img class="imgPr2" src="img/logXXF.png" alt="Logo" onerror="this.style.display='none'">
-            <div id="adver">
-                <div id="fact">
-                    <h4 class="marNon strCent">EXIJA SU</h4>
-                    <h1 class="marNon strCent">FACTURA</h1>
-                </div>
-                <div>
-                    <h3>ESTE BOLETO CONSTITUYE RESERVA DE PASAJE</h3>
-                </div>
-            </div>
-            <div>
-                <h3 class="dtP cien">De SC a: ${destino}</h3>
-            </div>
-            <div>
-                <h3 class="nmP cien">NOMBRE: ${groupName}</h3>
-            </div>
-            <div>
-                <h3 class="ciPr">CI/CEL: ${cis[0] || '0'}</h3>
-            </div>
-            <div>
-                <h3 class="pl">PLACA: ${pl}</h3>
-                <h3 class="ca">CARRIL: ${carril}</h3>
-            </div>
-            <div>
-                <h3 class="fechaPrint">FECHA: ${fecha}</h3>
-                <h3 class="hrP">HORA: ${hh === 'n' ? '' : hh}</h3>
-            </div>
-            <div>
-                <h3 class="prP">TOTAL: ${precioPorAsiento * asientosSeleccionados.length}</h3>
-                <h3 class="asP">ASIENTOS: ${sortedAsientos.join(', ')}</h3>
-            </div>
-            <div>
-                <h3 id="emP" class="big">EMITIDO POR: </h3>
-            </div>
-            <h1 class="bv">¡¡BUEN VIAJE!!</h1>
-            <p id="msj">AVISE 3 HRS ANTES DE ABORDAR EL BUS EN CASO DE DEVOLUCION<br>
-                No valido para credito fiscal.
-            </p>
-        `;
-        
-        printContainer.appendChild(ticketDiv);
-    } else {
-        // Impresión normal (individual)
-        asientosSeleccionados.forEach((asiento, index) => {
-            const ticketDiv = document.createElement('div');
-            ticketDiv.className = 'pasajeroPrintBody';
-            
-            ticketDiv.innerHTML = `
+
+        html = `
+            <div class="pasajeroPrintBody">
                 <img class="imgPr2" src="img/logXXF.png" alt="Logo" onerror="this.style.display='none'">
                 <div id="adver">
                     <div id="fact">
@@ -575,25 +557,25 @@ function printTicket(option, groupName = '') {
                     </div>
                 </div>
                 <div>
-                    <h3 class="dtP cien">De SC a: ${destino}</h3>
+                    <h3 class="dtP cien">De SC a: ${esc(destino)}</h3>
                 </div>
                 <div>
-                    <h3 class="nmP cien">NOMBRE: ${nombres[index] || ''}</h3>
+                    <h3 class="nmP cien">NOMBRE: ${esc(groupName)}</h3>
                 </div>
                 <div>
-                    <h3 class="ciPr">CI/CEL: ${cis[index] || '0'}</h3>
+                    <h3 class="ciPr">CI/CEL: ${esc(cis[0] || '0')}</h3>
                 </div>
                 <div>
-                    <h3 class="pl">PLACA: ${pl}</h3>
-                    <h3 class="ca">CARRIL: ${carril}</h3>
+                    <h3 class="pl">PLACA: ${esc(pl)}</h3>
+                    <h3 class="ca">CARRIL: ${esc(carril)}</h3>
                 </div>
                 <div>
-                    <h3 class="fechaPrint">FECHA: ${fecha}</h3>
-                    <h3 class="hrP">HORA: ${(option === 'full' || option === 'time') ? (hh === 'n' ? '' : hh) : ''}</h3>
+                    <h3 class="fechaPrint">FECHA: ${esc(fecha)}</h3>
+                    <h3 class="hrP">HORA: ${esc(hh === 'n' ? '' : hh)}</h3>
                 </div>
                 <div>
-                    <h3 class="prP">PRECIO: ${(option === 'full' || option === 'price') ? precioPorAsiento : ''}</h3>
-                    <h3 class="asP">ASIENTO: ${asiento}</h3>
+                    <h3 class="prP">TOTAL: ${esc(precioPorAsiento * asientosSeleccionados.length)}</h3>
+                    <h3 class="asP">ASIENTOS: ${esc(sortedAsientos.join(', '))}</h3>
                 </div>
                 <div>
                     <h3 id="emP" class="big">EMITIDO POR: </h3>
@@ -602,68 +584,69 @@ function printTicket(option, groupName = '') {
                 <p id="msj">AVISE 3 HRS ANTES DE ABORDAR EL BUS EN CASO DE DEVOLUCION<br>
                     No valido para credito fiscal.
                 </p>
+            </div>
+        `;
+    } else {
+        const tickets = asientosSeleccionados.map((asiento, index) => {
+            const ticket = `
+                <div class="pasajeroPrintBody">
+                    <img class="imgPr2" src="img/logXXF.png" alt="Logo" onerror="this.style.display='none'">
+                    <div id="adver">
+                        <div id="fact">
+                            <h4 class="marNon strCent">EXIJA SU</h4>
+                            <h1 class="marNon strCent">FACTURA</h1>
+                        </div>
+                        <div>
+                            <h3>ESTE BOLETO CONSTITUYE RESERVA DE PASAJE</h3>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="dtP cien">De SC a: ${esc(destino)}</h3>
+                    </div>
+                    <div>
+                        <h3 class="nmP cien">NOMBRE: ${esc(nombres[index] || '')}</h3>
+                    </div>
+                    <div>
+                        <h3 class="ciPr">CI/CEL: ${esc(cis[index] || '0')}</h3>
+                    </div>
+                    <div>
+                        <h3 class="pl">PLACA: ${esc(pl)}</h3>
+                        <h3 class="ca">CARRIL: ${esc(carril)}</h3>
+                    </div>
+                    <div>
+                        <h3 class="fechaPrint">FECHA: ${esc(fecha)}</h3>
+                        <h3 class="hrP">HORA: ${esc((option === 'full' || option === 'time') ? (hh === 'n' ? '' : hh) : '')}</h3>
+                    </div>
+                    <div>
+                        <h3 class="prP">PRECIO: ${esc((option === 'full' || option === 'price') ? precioPorAsiento : '')}</h3>
+                        <h3 class="asP">ASIENTO: ${esc(asiento)}</h3>
+                    </div>
+                    <div>
+                        <h3 id="emP" class="big">EMITIDO POR: </h3>
+                    </div>
+                    <h1 class="bv">¡¡BUEN VIAJE!!</h1>
+                    <p id="msj">AVISE 3 HRS ANTES DE ABORDAR EL BUS EN CASO DE DEVOLUCION<br>
+                        No valido para credito fiscal.
+                    </p>
+                </div>
             `;
-            
-            printContainer.appendChild(ticketDiv);
-            
-            if (index < asientosSeleccionados.length - 1) {
-                const pageBreak = document.createElement('div');
-                pageBreak.style.pageBreakAfter = 'always';
-                printContainer.appendChild(pageBreak);
-            }
+            const pageBreak = index < asientosSeleccionados.length - 1 ? '<div style="page-break-after:always"></div>' : '';
+            return ticket + pageBreak;
         });
+        html = tickets.join('');
     }
 
-    // Resto del código para manejar la impresión...
-    const img = new Image();
-    img.src = 'img/logXXF.png';
-    
-    img.onload = function() {
-        document.querySelectorAll('.imgPr2').forEach(imgEl => {
-            imgEl.src = img.src;
-        });
-        
-        setTimeout(() => {
-            window.print();
-            
-            setTimeout(() => {
-                printContainer.style.display = 'none';
-                printContainer.innerHTML = '';
-                
-                const params = new URLSearchParams(window.location.search);
-                const fechaParam = params.get("fecha");
-                const fecha = encodeURIComponent(fechaParam);
-                
-                if (c1 == "n") {
-                    window.location = `diario.html?fecha=${fecha}`;
-                } else {
-                    window.location = `ver.html?codR=${codR}&fecha=${fecha}`;
-                }
-            }, 500);
-        }, 500);
-    };
-    
-    img.onerror = function() {
-        console.error("Error al cargar la imagen del logo");
-        setTimeout(() => {
-            window.print();
-            
-            setTimeout(() => {
-                printContainer.style.display = 'none';
-                printContainer.innerHTML = '';
-                
-                const params = new URLSearchParams(window.location.search);
-                const fechaParam = params.get("fecha");
-                const fecha = encodeURIComponent(fechaParam);
-                
-                if (c1 == "n") {
-                    window.location = `diario.html?fecha=${fecha}`;
-                } else {
-                    window.location = `ver.html?codR=${codR}&fecha=${fecha}`;
-                }
-            }, 500);
-        }, 500);
-    };
+    window.imprimirHTML({
+        win,
+        titulo: 'Ticket',
+        cssHref: 'css/print-pasajero.css',
+        cssCritico: '@page{margin:0}',
+        html
+    });
+
+    setTimeout(() => {
+        redirectAfterPrint();
+    }, 1000);
 }
 
 // Iniciar intervalo para la hora

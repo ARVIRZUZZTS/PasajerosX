@@ -5,7 +5,7 @@ if (isset($_GET['codR'])) {
     $codR = $_GET['codR'];
 
     // Primero elimina los pasajeros relacionados (si es necesario)
-    $stmt1 = $conexion->prepare("DELETE FROM persona WHERE codR = ?");
+    $stmt1 = $conexion->prepare("DELETE FROM pasajeros WHERE codR = ?");
     $stmt1->bind_param("s", $codR);
     $stmt1->execute();
 

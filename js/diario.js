@@ -1,4 +1,6 @@
-﻿var totalT = 0;
+const PRINT_CSS_HREF = new URL('css/print-diario.css', window.location.href).href;
+const LOGO_URL = new URL('img/logXXF.png', window.location.href).href;
+const PRINT_CSS_CRITICO = '@page{margin:0.5cm;}';
 function back() {
     window.location = "menu.html";
 }
@@ -43,7 +45,6 @@ function getDiarios() {
     const params = new URLSearchParams(window.location.search);
     const fechaParam = params.get("fecha");
     const fechaDecodificada = decodeURIComponent(fechaParam);
-    totalT = 0;
     fetch(`php/diario/getDiarios.php?fecha=${encodeURIComponent(fechaDecodificada)}`)
         .then(response => {
             if (!response.ok) {
@@ -78,16 +79,11 @@ function getDiarios() {
                     <td class="pr">${p.precio}</td>
                     <td><button class="im" onclick="printy(${p.codP})"><img src="img/printW.png"></button></td>
                 `;
-                totalT += p.precio;
                 contenedor.appendChild(tr);
             });
-            const totaEl = document.getElementById("tota");
-            if (totaEl) totaEl.textContent = "Total: " + totalT.toFixed(2);
         })
         .catch(error => {
             console.error("Error al cargar los diarios:", error);
-            const totaEl3 = document.getElementById("tota");
-            if (totaEl3) totaEl3.textContent = "Total: 0";
         });
 }
 
@@ -292,21 +288,20 @@ function printy(codP) {
     const hr = document.getElementById("hora").textContent;
     const fecha = fe.split(" ")[2];
     const pasajeroDiv = document.getElementById(`pasajero-${codP}`);
-    
+
     if (codP == 0) {
-        // MANTENEMOS EXACTAMENTE IGUAL LA FUNCIONALIDAD PARA TICKETS VACÍOS
         const cantidad = prompt("¿Cuántos tickets vacíos deseas imprimir?", "1");
-        
         if (cantidad === null) return;
         const numTickets = parseInt(cantidad);
         if (isNaN(numTickets) || numTickets <= 0) {
             alert("Por favor ingresa un número válido mayor que 0");
             return;
         }
-
+        const win = window.abrirHojaImpresion({ ancho: 900, alto: 900, titulo: 'Tickets vacios' });
+        if (!win) { alert('Permite las ventanas emergentes e intenta de nuevo.'); return; }
         const ticketHTML = `
         <div id="pasajeroPrintBody">
-            <img id="imgPr2" src="img/logXXF.png" alt="Logo">
+            <img id="imgPr2" src="${esc(LOGO_URL)}" alt="Logo">
             <div id="adver">
                 <div id="fact">
                     <h4 class="marNon strCent">EXIJA SU</h4>
@@ -330,12 +325,12 @@ function printy(codP) {
                 <h3 class="ca big">CARRIL: 30</h3>
             </div>
             <div>
-                <h3 id="fechaPrint" class="big">FECHA: ${fecha}</h3>
+                <h3 id="fechaPrint" class="big">FECHA: ${esc(fecha)}</h3>
                 <h3 id="hrP" class="big">HORA: </h3>
-            </div>             
+            </div>
             <div>
                 <h3 id="prP" class="big">PRECIO: </h3>
-                <h3 id="asP" class="big">ASIENTO: </h3>                
+                <h3 id="asP" class="big">ASIENTO: </h3>
             </div>
             <div>
                 <h3 id="emP" class="big">EMITIDO POR: </h3>
@@ -346,127 +341,111 @@ function printy(codP) {
             </p>
         </div>
         `;
-
-        document.getElementById('printP').style.display = 'block';
-        document.getElementById("printP").innerHTML = '';
-        
+        let html = '';
         for (let i = 0; i < numTickets; i++) {
-            const ticketDiv = document.createElement('div');
-            ticketDiv.innerHTML = ticketHTML;
-            document.getElementById("printP").appendChild(ticketDiv);
-            
+            html += ticketHTML;
             if (i < numTickets - 1) {
-                const corte = document.createElement('div');
-                corte.style.pageBreakAfter = 'always';
-                document.getElementById("printP").appendChild(corte);
+                html += '<div style="page-break-after: always;"></div>';
             }
         }
-
-        const img = new Image();
-        img.src = 'img/logXXF.png';
-        img.onload = function() {
-            document.querySelectorAll('#imgPr2').forEach(imgEl => {
-                imgEl.src = img.src;
-            });
-            
-            setTimeout(() => {
-                window.print();
-                document.getElementById('printP').style.display = 'none';
-            }, 200);
-        };
-        img.onerror = function() {
-            console.error("No se pudo cargar la imagen");
-            window.print();
-            document.getElementById('printP').style.display = 'none';
-        };
-    } else {
-        // AQUÍ IMPLEMENTAMOS EL MODAL PARA TICKETS INDIVIDUALES
-        if (!pasajeroDiv) {
-            console.warn("Pasajero con codP no encontrado en el DOM.");
-            return;
-        }
-
-        // Obtener datos del pasajero
-        const asiento = pasajeroDiv.querySelector(".as").textContent;
-        const nombre = pasajeroDiv.querySelector(".nm").textContent;
-        const ci = pasajeroDiv.querySelector(".ci").textContent;
-        const dest = pasajeroDiv.querySelector(".dt").textContent;
-        const precio = pasajeroDiv.querySelector(".pr").textContent;
-
-        // Mostrar modal de opciones
-        showPrintOptionsModal({
-            fecha: fecha,
-            horaActual: hr,
-            destino: dest,
-            nombre: nombre,
-            ci: ci,
-            asiento: asiento,
-            precio: precio,
-            codP: codP
-        });
+        window.imprimirHTML({ win, titulo: 'Tickets vacios', cssHref: PRINT_CSS_HREF, cssCritico: PRINT_CSS_CRITICO, html });
+        return;
     }
+    if (!pasajeroDiv) {
+        console.warn("Pasajero con codP no encontrado en el DOM.");
+        return;
+    }
+    const asiento = pasajeroDiv.querySelector(".as").textContent;
+    const nombre = pasajeroDiv.querySelector(".nm").textContent;
+    const ci = pasajeroDiv.querySelector(".ci").textContent;
+    const dest = pasajeroDiv.querySelector(".dt").textContent;
+    const precio = pasajeroDiv.querySelector(".pr").textContent;
+    showPrintOptionsModal({
+        fecha: fecha,
+        horaActual: hr,
+        destino: dest,
+        nombre: nombre,
+        ci: ci,
+        asiento: asiento,
+        precio: precio,
+        codP: codP
+    });
 }
-
-// Función para mostrar el modal de opciones de impresión
 function showPrintOptionsModal(datosPasajero) {
     const modal = document.createElement('div');
     modal.id = 'printOptionsModal';
-    modal.style.position = 'fixed';
-    modal.style.top = '0';
-    modal.style.left = '0';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
-    modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
-    modal.style.display = 'flex';
-    modal.style.justifyContent = 'center';
-    modal.style.alignItems = 'center';
-    modal.style.zIndex = '1000';
-    
+    modal.className = 'print-options-overlay';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'printOptionsTitle');
+
     modal.innerHTML = `
-        <div style="background: white; padding: 20px; border-radius: 10px; width: 300px; text-align: center;">
-            <h2 style="margin-top: 0;">Opciones de Impresión</h2>
+        <div class="print-options-card">
+            <h2 id="printOptionsTitle">Opciones de Impresión</h2>
             <p>Seleccione el formato de impresión:</p>
-            <button id="printFull" class="print-option-btn">COMPLETO</button>
-            <button id="printPrice" class="print-option-btn">SOLO PRECIO</button>
-            <button id="printTime" class="print-option-btn">SOLO HORA</button>
-            <button id="printEmpty" class="print-option-btn">VACÍO</button>
-            <button id="printCancel" class="print-option-btn cancel-btn">CANCELAR</button>
+            <div class="print-options-actions">
+                <button id="printFull" class="print-option-btn">COMPLETO</button>
+                <button id="printPrice" class="print-option-btn">SOLO PRECIO</button>
+                <button id="printTime" class="print-option-btn">SOLO HORA</button>
+                <button id="printEmpty" class="print-option-btn">VACÍO</button>
+                <button id="printCancel" class="print-option-btn cancel-btn">CANCELAR</button>
+            </div>
         </div>
     `;
-    
+
     document.body.appendChild(modal);
     document.body.style.overflow = 'hidden';
-    
-    // Configurar botones del modal
+
+    const firstOption = modal.querySelector('.print-option-btn');
+    if (firstOption) firstOption.focus();
+
+    const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+            if (modal.parentNode) document.body.removeChild(modal);
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleEscape);
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
+
+    const openAndPrint = (option) => {
+        const win = window.abrirHojaImpresion({ ancho: 900, alto: 900, titulo: 'Ticket' });
+        if (!win) {
+            alert('Permite las ventanas emergentes e intenta de nuevo.');
+            return;
+        }
+        printIndividualTicket(win, datosPasajero, option);
+    };
+
     document.getElementById('printFull').addEventListener('click', () => {
         document.body.removeChild(modal);
         document.body.style.overflow = '';
-        printIndividualTicket(datosPasajero, 'full');
+        openAndPrint('full');
     });
-    
+
     document.getElementById('printPrice').addEventListener('click', () => {
         document.body.removeChild(modal);
         document.body.style.overflow = '';
-        printIndividualTicket(datosPasajero, 'price');
+        openAndPrint('price');
     });
-    
+
     document.getElementById('printTime').addEventListener('click', () => {
         document.body.removeChild(modal);
         document.body.style.overflow = '';
-        printIndividualTicket(datosPasajero, 'time');
+        openAndPrint('time');
     });
-    
+
     document.getElementById('printEmpty').addEventListener('click', () => {
         document.body.removeChild(modal);
         document.body.style.overflow = '';
-        printIndividualTicket(datosPasajero, 'empty');
+        openAndPrint('empty');
     });
-    
+
     document.getElementById('printCancel').addEventListener('click', () => {
         document.body.removeChild(modal);
         document.body.style.overflow = '';
     });
-    
+
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             document.body.removeChild(modal);
@@ -475,207 +454,87 @@ function showPrintOptionsModal(datosPasajero) {
     });
 }
 
-// Función para imprimir ticket individual según la opción seleccionada
-function printIndividualTicket(datosPasajero, option) {
-    const fe = document.getElementById("fecha").textContent;
-    const fecha = fe.split(" ")[2];
-    
-    // Primero obtenemos el codR del pasajero y luego la hora del reporte
+function printIndividualTicket(win, datosPasajero, option) {
+    if (!win) return;
+    const render = (placa, carril, horaReporte) => {
+        const html = `
+        <div id="pasajeroPrintBody">
+            <img id="imgPr2" src="${esc(LOGO_URL)}" alt="Logo">
+            <div id="adver">
+                <div id="fact">
+                    <h4 class="marNon strCent">EXIJA SU</h4>
+                    <h1 class="marNon strCent">FACTURA</h1>
+                </div>
+                <div>
+                    <h3>ESTE BOLETO CONSTITUYE RESERVA DE PASAJE</h3>
+                </div>
+            </div>
+            <div>
+                <h3 id="dtP" class="cien">De SC a: ${esc(datosPasajero.destino)}</h3>
+            </div>
+            <div>
+                <h3 id="nmP" class="cien">NOMBRE: ${esc(datosPasajero.nombre)}</h3>
+            </div>
+            <div>
+                <h3 class="ciPr">CI/CEL: ${esc(datosPasajero.ci)}</h3>
+            </div>
+            <div>
+                <h3 class="pl">PLACA: ${esc(placa)}</h3>
+                <h3 class="ca">CARRIL: ${esc(carril)}</h3>
+            </div>
+            <div>
+                <h3 id="fechaPrint">FECHA: ${esc(datosPasajero.fecha)}</h3>
+                <h3 id="hrP">HORA: ${option === 'full' || option === 'time' ? esc(horaReporte) : ''}</h3>
+            </div>
+            <div>
+                <h3 id="prP">PRECIO: ${option === 'full' || option === 'price' ? esc(datosPasajero.precio) : ''}</h3>
+                <h3 id="asP">ASIENTO: ${esc(datosPasajero.asiento)}</h3>
+            </div>
+            <div>
+                <h3 id="emP" class="big">EMITIDO POR: </h3>
+            </div>
+            <h1 id="bv">¡¡BUEN VIAJE!!</h1>
+            <p id="msj">AVISE 3 HRS ANTES DE ABORDAR EL BUS EN CASO DE DEVOLUCION<br>
+                No valido para credito fiscal.
+            </p>
+        </div>
+        `;
+        window.imprimirHTML({ win, titulo: 'Ticket', cssHref: PRINT_CSS_HREF, cssCritico: PRINT_CSS_CRITICO, html });
+    };
+
     fetch(`php/diario/getHoraReporte.php?codP=${datosPasajero.codP}`)
         .then(response => {
-            if (!response.ok) {
-                throw new Error("Error al obtener datos del reporte");
-            }
+            if (!response.ok) throw new Error("Error al obtener datos del reporte");
             return response.json();
         })
         .then(reporteData => {
             const horaReporte = reporteData.hora || '';
-            
-            // Ahora obtenemos el carril
             return fetch(`php/diario/getMarca.php?codP=${datosPasajero.codP}`)
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al obtener datos del pasajero");
-                    }
+                    if (!response.ok) throw new Error("Error al obtener datos del pasajero");
                     return response.json();
                 })
                 .then(data => {
                     const carril = data.carril || "30";
                     const placa = data.placa || "";
-                    
-                    // Construir el HTML según la opción seleccionada
-                    document.getElementById('printP').style.display = 'block';
-                    document.getElementById("printP").innerHTML = `
-                    <div id="pasajeroPrintBody">
-                        <img id="imgPr2" src="img/logXXF.png" alt="Logo">
-                        <div id="adver">
-                            <div id="fact">
-                                <h4 class="marNon strCent">EXIJA SU</h4>
-                                <h1 class="marNon strCent">FACTURA</h1>
-                            </div>
-                            <div>
-                                <h3>ESTE BOLETO CONSTITUYE RESERVA DE PASAJE</h3>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 id="dtP" class="cien">De SC a: ${datosPasajero.destino}</h3>
-                        </div>
-                        <div>
-                            <h3 id="nmP" class="cien">NOMBRE: ${datosPasajero.nombre}</h3>
-                        </div>
-                        <div>
-                            <h3 class="ciPr">CI/CEL: ${datosPasajero.ci}</h3>
-                        </div>
-                        <div>
-                            <h3 class="pl">PLACA: ${placa}</h3>
-                            <h3 class="ca">CARRIL: ${carril}</h3>
-                        </div>
-                        <div>
-                            <h3 id="fechaPrint">FECHA: ${datosPasajero.fecha}</h3>
-                            <h3 id="hrP">HORA: ${option === 'full' || option === 'time' ? horaReporte : ''}</h3>
-                        </div> 
-                        <div>
-                            <h3 id="prP">PRECIO: ${option === 'full' || option === 'price' ? datosPasajero.precio : ''}</h3>
-                            <h3 id="asP">ASIENTO: ${datosPasajero.asiento}</h3>
-                        </div>
-                        <div>
-                            <h3 id="emP" class="big">EMITIDO POR: </h3>
-                        </div>
-                        <h1 id="bv">¡¡BUEN VIAJE!!</h1>
-                        <p id="msj">AVISE 3 HRS ANTES DE ABORDAR EL BUS EN CASO DE DEVOLUCION<br>
-                            No valido para credito fiscal.
-                        </p>
-                    </div>
-                    `;
-
-                    // Precargar imagen
-                    const img = new Image();
-                    img.src = 'img/logXXF.png';
-                    img.onload = function() {
-                        document.getElementById("imgPr2").src = img.src;
-                        setTimeout(() => {
-                            window.print();
-                            document.getElementById('printP').style.display = 'none';
-                        }, 200);
-                    };
-                    img.onerror = function() {
-                        console.error("No se pudo cargar la imagen");
-                        window.print();
-                        document.getElementById('printP').style.display = 'none';
-                    };
+                    render(placa, carril, horaReporte);
                 });
         })
         .catch(error => {
             console.error("Error al obtener la hora del reporte:", error);
-            
-            // Mostrar ticket incluso si falla la obtención de la hora
             fetch(`php/diario/getMarca.php?codP=${datosPasajero.codP}`)
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al obtener datos del pasajero");
-                    }
+                    if (!response.ok) throw new Error("Error al obtener datos del pasajero");
                     return response.json();
                 })
                 .then(data => {
                     const carril = data.carril || "30";
-                    
-                    document.getElementById('printP').style.display = 'block';
-                    document.getElementById("printP").innerHTML = `
-                    <div id="pasajeroPrintBody">
-                        <img id="imgPr2" src="img/logXXF.png" alt="Logo">
-                        <div>
-                            <h3 id="dtP" class="cien">De SC a: ${datosPasajero.destino}</h3>
-                        </div>
-                        <div>
-                            <h3 id="nmP" class="cien">NOMBRE: ${datosPasajero.nombre}</h3>
-                        </div>
-                        <div>
-                            <h3 id="fechaPrint">FECHA: ${datosPasajero.fecha}</h3>
-                            <h3 id="hrP">HORA: ${option === 'full' || option === 'time' ? '' : ''}</h3>
-                        </div> 
-                        <div>
-                            <h3 class="ciPr">CI: ${datosPasajero.ci}</h3>
-                            <h3 class="ca">CARRIL: ${carril}</h3>
-                        </div>
-                        <div>
-                            <h3 id="asP">ASIENTO: ${datosPasajero.asiento}</h3>
-                            <h3 id="prP">PRECIO: ${option === 'full' || option === 'price' ? datosPasajero.precio : ''}</h3>
-                        </div>
-                        <p class="emision">Emitido a las ${datosPasajero.horaActual}</p>
-                        <h1 id="bv">¡¡BUEN VIAJE!!</h1>
-                        <p id="msj">ANTES DE ABORDAR CAMBIAR POR FACTURA<br>
-                            Este operador se encuentra bajo regulación y fiscalización de telecomunicaciones y transporte. 
-                            No se aceptan devoluciones.<br>Este boleto constituye como reserva de pasaje<br>
-                            No valido para credito fiscal.
-                        </p>
-                    </div>
-                    `;
-                    
-                    const img = new Image();
-                    img.src = 'img/logXXF.png';
-                    img.onload = function() {
-                        document.getElementById("imgPr2").src = img.src;
-                        setTimeout(() => {
-                            window.print();
-                            document.getElementById('printP').style.display = 'none';
-                        }, 200);
-                    };
-                    img.onerror = function() {
-                        console.error("No se pudo cargar la imagen");
-                        window.print();
-                        document.getElementById('printP').style.display = 'none';
-                    };
+                    const placa = data.placa || "";
+                    render(placa, carril, '');
                 })
-                .catch(error => {
-                    console.error("Error al obtener el carril:", error);
-                    
-                    // Mostrar ticket con carril por defecto si falla todo
-                    document.getElementById('printP').style.display = 'block';
-                    document.getElementById("printP").innerHTML = `
-                    <div id="pasajeroPrintBody">
-                        <img id="imgPr2" src="img/logXXF.png" alt="Logo">
-                        <div>
-                            <h3 id="dtP" class="cien">De SC a: ${datosPasajero.destino}</h3>
-                        </div>
-                        <div>
-                            <h3 id="nmP" class="cien">NOMBRE: ${datosPasajero.nombre}</h3>
-                        </div>
-                        <div>
-                            <h3 id="fechaPrint">FECHA: ${datosPasajero.fecha}</h3>
-                            <h3 id="hrP">HORA: ${option === 'full' || option === 'time' ? '' : ''}</h3>
-                        </div> 
-                        <div>
-                            <h3 class="ciPr">CI: ${datosPasajero.ci}</h3>
-                            <h3 class="ca">CARRIL: 30</h3>
-                        </div>
-                        <div>
-                            <h3 id="asP">ASIENTO: ${datosPasajero.asiento}</h3>
-                            <h3 id="prP">PRECIO: ${option === 'full' || option === 'price' ? datosPasajero.precio : ''}</h3>
-                        </div>
-                        <p class="emision">Emitido a las ${datosPasajero.horaActual}</p>
-                        <h1 id="bv">¡¡BUEN VIAJE!!</h1>
-                        <p id="msj">ANTES DE ABORDAR CAMBIAR POR FACTURA<br>
-                            Este operador se encuentra bajo regulación y fiscalización de telecomunicaciones y transporte. 
-                            No se aceptan devoluciones.<br>Este boleto constituye como reserva de pasaje<br>
-                            No valido para credito fiscal.
-                        </p>
-                    </div>
-                    `;
-                    
-                    const img = new Image();
-                    img.src = 'img/logXXF.png';
-                    img.onload = function() {
-                        document.getElementById("imgPr2").src = img.src;
-                        setTimeout(() => {
-                            window.print();
-                            document.getElementById('printP').style.display = 'none';
-                        }, 200);
-                    };
-                    img.onerror = function() {
-                        console.error("No se pudo cargar la imagen");
-                        window.print();
-                        document.getElementById('printP').style.display = 'none';
-                    };
+                .catch(error2 => {
+                    console.error("Error al obtener el carril:", error2);
+                    render('', "30", '');
                 });
         });
 }

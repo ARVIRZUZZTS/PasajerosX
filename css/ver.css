@@ -97,6 +97,10 @@ input {
 .asOcu {
     background-color: red;
 }
+.asBloq {
+    background-color: #ff4d4d;
+    cursor: not-allowed;
+}
 .asLib {
     background-color: #4CAF50;
 }
@@ -214,7 +218,7 @@ input {
     margin-right: 20px;
 }
 /*///////////////MODAL////////////////////////////////////*/
-#printFull {color: white; background-color: #003591; outline: none; padding: 10px; border-radius: 5px;margin: 10px; transition: 300ms;}
+#printFull {color: white; background-color: #003591; outline: none; padding: 10px; border-radius: 5px; transition: 300ms;}
 
 /*///////////////////////////////////////////////////*/
 #printReporte,

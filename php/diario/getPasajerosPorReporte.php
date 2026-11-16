@@ -8,7 +8,7 @@ if (!$codR) {
     exit;
 }
 
-$sql = "SELECT * FROM persona WHERE codR = ?";
+$sql = "SELECT * FROM pasajeros WHERE codR = ?";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param("i", $codR);
 $stmt->execute();

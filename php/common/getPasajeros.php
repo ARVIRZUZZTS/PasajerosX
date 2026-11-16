@@ -4,7 +4,7 @@ include '../conexion.php';
 if (isset($_GET['codR'])) {
     $codR = $_GET['codR'];
 
-    $query = "SELECT * FROM persona WHERE codR = ? ORDER BY asiento";
+    $query = "SELECT * FROM pasajeros WHERE codR = ? ORDER BY asiento";
     $stmt = $conexion->prepare($query);
     $stmt->bind_param("i", $codR);
 

@@ -1,0 +1,239 @@
+#imgPr {
+    width: 340px;
+    max-width: 340px;
+    display: block;
+    margin: 0 auto;
+}
+#imgPr2 {
+    width: 340px;
+    max-width: 340px;
+    display: block;
+}
+div {
+    page-break-inside: avoid;
+}
+#topPrint div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+#topPrint div h3 {
+    margin: 0px;
+}
+#lbsc {
+    margin: 0px !important;
+}
+.tizq {
+    border-right: none !important;
+}
+#topPrint div h2 {
+    text-align: center;
+}
+#middle {
+    text-align: center;
+}
+#pasTitle {
+    width: 100%;
+    text-align: center;
+}
+#pasTitle h2 {
+    margin-top: 0px;
+}
+#titlesPr {
+    display: flex;
+    width: 100%;
+}
+.pasajeroPrint {
+    display: flex;
+    width: 100%;
+}
+.asP { width: 10%; text-align: left; margin: 0px; border-right: 1px solid black; }
+.nmP { width: 65%; text-align: left; margin: 0px; border-right: 1px solid black; padding-left: 4px; }
+.ciP { width: 25%; text-align: right; margin: 0px; }
+
+#pasajeroPrintBody {
+    width: 331px;
+}
+#pasajeroPrintBody div {
+    display: flex;
+}
+#pasajeroPrintBody div h3 {
+    padding: 5px;
+    margin: 0px;
+}
+.marNon {
+    margin: 0px 0px 3px 0px;
+}
+.strCent {
+    text-align: center !important;
+    width: 100% !important;
+}
+.big {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+#fact {
+    display: flex;
+    flex-direction: column;
+}
+.cien {
+    text-align: left !important;
+}
+#dtP {
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+}
+#nmP { border: 1px solid black; border-top: 0px; }
+.ciPr {
+    margin: 0px;
+    text-align: left !important;
+    border: 1px solid black;
+    border-top: 0px;
+}
+.pl {
+    padding: 5px;
+    text-align: left !important;
+    width: 70% !important;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+}
+.ca {
+    text-align: left !important;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 30% !important;
+}
+#asP {
+    text-align: left !important;
+    border: 1px solid black;
+    border-top: 0px;
+    width: 50% !important;
+}
+#prP {
+    text-align: left !important;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 50% !important;
+}
+#emP {
+    text-align: left !important;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    width: 100% !important;
+}
+#hrP {
+    width: 50%;
+    text-align: left !important;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+#fechaPrint { text-align: left !important; border: 1px solid black; border-top: 0px; width: 50% !important; }
+#bv {
+    margin: 5px 0px 5px 0px;
+}
+#msj {
+    margin-top: 0px;
+    font-size: large;
+}
+#pasajeroPrintBody h1, #pasajeroPrintBody h3, #pasajeroPrintBody p {
+    text-align: center;
+    width: 100%;
+}
+#detalle {
+    display: flex;
+    flex-direction: column;
+}
+#precios {
+    display: flex;
+    flex-direction: column;
+}
+#precios h3 {
+    text-align: left !important;
+}
+.botBor {
+    width: 100%;
+    border-bottom: 1px solid black;
+}
+.lefty {
+    text-align: left !important;
+}
+.righty {
+    text-align: right !important;
+}
+.blank {
+    color: white !important;
+}
+#descue {
+    text-align: left !important;
+}
+.os-copy {
+    transform-origin: top left;
+    transform: rotate(90deg) translate(0, -100%);
+}
+.os-content {
+    width: 450px;
+    display: flex;
+    flex-direction: column;
+}
+.os-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.os-salida {
+    border: 1px solid black;
+    padding: 1px 10px;
+    border-radius: 5px;
+}
+.os-logo {
+    width: 180px;
+    height: auto;
+}
+.os-header h1 {
+    margin: 0;
+    text-align: center;
+    font-size: 24px;
+}
+.os-body {
+    display: flex;
+    width: 100%;
+    font-size: 14px;
+}
+.os-left {
+    width: 70%;
+    font-size: 12px;
+}
+.os-left span {
+    font-size: 7px;
+}
+.os-right {
+    width: 30%;
+    font-size: 12px;
+}
+.os-body h4 {
+    margin: 1px 0;
+    padding: 2px 5px;
+    font-size: 14px;
+}
+.os-fecha {
+    text-align: center;
+}
+.os-signatures {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 4px;
+}
+.os-sig {
+    border-top: 1px dotted black;
+    padding-top: 3px;
+    text-align: center;
+    width: 40%;
+}
+.page-break {
+    page-break-after: always;
+}

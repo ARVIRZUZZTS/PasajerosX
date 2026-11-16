@@ -12,7 +12,7 @@ if (!$codP || !$asiento || !$codR) {
 }
 
 // Verificar que el asiento no esté ocupado en el NUEVO reporte
-$sql = "SELECT codP FROM persona WHERE codR = ? AND asiento = ? AND codP != ?";
+$sql = "SELECT codP FROM pasajeros WHERE codR = ? AND asiento = ? AND codP != ?";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param("iii", $codR, $asiento, $codP);
 $stmt->execute();
@@ -23,8 +23,17 @@ if ($result->num_rows > 0) {
     exit;
 }
 
+// Verificar asiento bloqueado (reserva)
+$blk = $conexion->prepare("SELECT id FROM asientos_bloqueados WHERE codR = ? AND asiento = ? AND deleted = 0");
+$blk->bind_param("ii", $codR, $asiento);
+$blk->execute();
+if ($blk->get_result()->num_rows > 0) {
+    echo json_encode(["success" => false, "error" => "El asiento está bloqueado por reserva"]);
+    exit;
+}
+
 // Actualizar el asiento
-$sql = "UPDATE persona SET asiento = ? WHERE codP = ?";
+$sql = "UPDATE pasajeros SET asiento = ? WHERE codP = ?";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param("ii", $asiento, $codP);
 

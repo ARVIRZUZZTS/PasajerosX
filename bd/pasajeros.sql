@@ -905,10 +905,10 @@ INSERT INTO `planilla` (`id`, `nombre`, `tipo`, `numAs`, `posX`, `posY`, `estado
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `persona`
+-- Estructura de tabla para la tabla `pasajeros`
 --
 
-CREATE TABLE `persona` (
+CREATE TABLE `pasajeros` (
   `codP` int(11) NOT NULL,
   `nombre` varchar(150) DEFAULT NULL,
   `ci` varchar(10) DEFAULT '0',
@@ -920,10 +920,10 @@ CREATE TABLE `persona` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `persona`
+-- Volcado de datos para la tabla `pasajeros`
 --
 
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (1, 'PEDRO', '834173', 1005, '24/07/2025', 'SANTA CRUZ', 100, 30),
 (2, 'PEDRO', '834173', NULL, '28/07/2025', 'SANTA CRUZ', 60, 32),
 (3, 'PEDRO', '0', 1006, '29/07/2025', 'SANTA CRUZ', 100, 20),
@@ -1637,7 +1637,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (714, 'MARIA RENBE ROCHA', '15326417', 1044, '22/08/2025', 'COCHABAMBA', 20, 31),
 (715, 'GIOVANA PACXO', '0', 1044, '22/08/2025', 'COCHABAMBA', 20, 32),
 (716, 'DELIA EWSPINOSA', '0', 1044, '22/08/2025', 'COCHABAMBA', 20, 33);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (717, 'ELIANA COPA', '0', 1044, '22/08/2025', 'COCHABAMBA', 20, 25),
 (718, 'MARIA HINOJOSA', '0', 1044, '22/08/2025', 'COCHABAMBA', 20, 3),
 (719, 'DANIELA LIZARAZU', '0', 1044, '22/08/2025', 'COCHABAMBA', 20, 29),
@@ -2332,7 +2332,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (1408, 'JUAN LOPEWZ', '14525655', 1066, '07/09/2025', 'COCHABAMBA', 20, 28),
 (1409, 'MONTERO', '0', 1066, '07/09/2025', 'COCHABAMBA', 20, 22),
 (1410, 'JUAN TORREZ', '6532410', 1066, '07/09/2025', 'COCHABAMBA', 20, 39);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (1411, 'MONTERO', '0', 1066, '07/09/2025', 'COCHABAMBA', 20, 40),
 (1412, 'MARTHA ANDRADE', '0', 1066, '07/09/2025', 'COCHABAMBA', 20, 11),
 (1413, 'MONTERO', '0', 1066, '07/09/2025', 'COCHABAMBA', 20, 43),
@@ -3024,7 +3024,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (2099, 'FELIX VIDAL', '4157744', 1087, '16/09/2025', 'YACUIBA', 20, 4),
 (2100, 'JULIO CESAR GONZALES', '6320097', 1087, '16/09/2025', 'YACUIBA', 20, 21),
 (2101, 'ELEUTERIO MAMANI', '13020100', 1087, '16/09/2025', 'YACUIBA', 20, 36);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (2102, 'EDIL FERNANDEZ', '8547114', 1087, '16/09/2025', 'YACUIBA', 20, 37),
 (2103, 'FAMILIA MAMANI', '0', 1087, '16/09/2025', 'YACUIBA', 20, 38),
 (2104, 'FAMILIA MNAMANI', '0', 1087, '16/09/2025', 'YACUIBA', 20, 39),
@@ -3716,7 +3716,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (2790, 'ANA ROCHA', '0', 1109, '28/09/2025', 'COCHABAMBA', 0, 14),
 (2791, 'GUALBERTO CHOQUE', '0', 1109, '28/09/2025', 'COCHABAMBA', 0, 35),
 (2792, 'JUANA ROJAS', '0', 1109, '28/09/2025', 'COCHABAMBA', 0, 36);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (2793, 'JOSUE ROCHA', '0', 1109, '28/09/2025', 'COCHABAMBA', 0, 15),
 (2794, 'ANA ANTEZANA', '0', 1109, '28/09/2025', 'COCHABAMBA', 0, 9),
 (2795, 'LIDIA CHOQUE', '0', 1109, '28/09/2025', 'COCHABAMBA', 0, 23),
@@ -4412,7 +4412,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (3559, 'EZEQUIEL BAVIA', '14815640', 1133, '12/10/2025', 'COCHABAMBA', 20, 10),
 (3560, 'ROSARIO BLACUTT', '2775687', 1133, '12/10/2025', 'COCHABAMBA', 20, 12),
 (3561, 'ROSARIO QUINTANA', '4079792', 1133, '12/10/2025', 'COCHABAMBA', 20, 8);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (3562, 'EMANUEL BAVIA', '17187949', 1133, '12/10/2025', 'COCHABAMBA', 20, 11),
 (3563, 'DENIS QUIROGA', '0', 1133, '12/10/2025', 'COCHABAMBA', 20, 13),
 (3564, 'LUZ QUIROGA', '0', 1133, '12/10/2025', 'COCHABAMBA', 20, 14),
@@ -5097,7 +5097,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (4243, 'ALICIA BALLESTEROS', '13987025', 1152, '22/10/2025', 'COCHABAMBA', 20, 23),
 (4244, 'ROBERTO COPATITI', '36574923', 1152, '22/10/2025', 'COCHABAMBA', 20, 25),
 (4245, 'SENFOROSO FLORES', '25065423', 1152, '22/10/2025', 'COCHABAMBA', 20, 33);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (4246, 'MARIANA CHURA', '22546586', 1152, '22/10/2025', 'COCHABAMBA', 20, 32),
 (4247, 'AIDE CXUELLAR MELGAR', '16554180', 1153, '23/10/2025', 'COCHABAMBA', 20, 36),
 (4248, 'JOSE LUIS VILLAREAL PATIÑO', '6393228', 1153, '23/10/2025', 'COCHABAMBA', 20, 35),
@@ -5788,7 +5788,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (4933, 'ANDRES LINARES', '9987441', 1173, '05/11/2025', 'COCHABAMBA', 20, 15),
 (4934, 'ALICIA MERCADO', '7414145', 1173, '05/11/2025', 'COCHABAMBA', 20, 23),
 (4935, 'FAMILIA MONTECARLO', '0', 1173, '05/11/2025', 'COCHABAMBA', 20, 24);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (4936, 'LUIS CARLOS RUEDA', '0', 1173, '05/11/2025', 'COCHABAMBA', 20, 33),
 (4937, 'MARIA RUEDAS', '6459854', 1173, '05/11/2025', 'COCHABAMBA', 20, 31),
 (4938, 'ANDREA MONTECARLO', '4512101', 1173, '05/11/2025', 'COCHABAMBA', 20, 25),
@@ -6476,7 +6476,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (5620, 'LIZBETH HEREDIA', '11386881', 1195, '14/11/2025', 'COCHABAMBA', 20, 19),
 (5621, 'SONIA PADILLA', '9418361', 1195, '14/11/2025', 'COCHABAMBA', 20, 13),
 (5622, 'JORGE MORALES', '3766363', 1195, '14/11/2025', 'COCHABAMBA', 20, 17);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (5623, 'MAGDALENA VALLEOS', '3603849', 1195, '14/11/2025', 'COCHABAMBA', 20, 18),
 (5624, 'CRISTINA ROMERO', '7806912', 1195, '14/11/2025', 'COCHABAMBA', 20, 26),
 (5625, 'SANTIAGO CONDE', '0', 1195, '14/11/2025', 'COCHABAMBA', 20, 27),
@@ -7160,7 +7160,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (6303, 'ROY ALVAREZ', '0', 1219, '28/11/2025', 'COCHABAMBA', 20, 22),
 (6304, 'GUILLERMO GONZALRS', '0', 1219, '28/11/2025', 'COCHABAMBA', 20, 20),
 (6305, 'JANETH ZURITA', '7965007', 1219, '28/11/2025', 'COCHABAMBA', 20, 16);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (6306, 'FRANCISCO TORRICO', '7546598', 1219, '28/11/2025', 'COCHABAMBA', 20, 23),
 (6307, 'MARIA SOLAR', '0', 1219, '28/11/2025', 'COCHABAMBA', 20, 25),
 (6308, 'NELLY CADIMA', '11425477', 1219, '28/11/2025', 'COCHABAMBA', 20, 32),
@@ -7845,7 +7845,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (6987, 'JUDITH FLORES', '0', 1240, '10/12/2025', 'COCHABAMBA', 20, 4),
 (6988, 'FAMILIA MUÑOZ', '13265756', 1240, '10/12/2025', 'COCHABAMBA', 20, 12),
 (6989, 'MILTON ESCOBAR', '0', 1240, '10/12/2025', 'COCHABAMBA', 20, 13);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (6990, 'JHAMIL MAMANI', '15243265', 1240, '10/12/2025', 'COCHABAMBA', 20, 26),
 (6991, 'MELINA MAMANI', '0', 1240, '10/12/2025', 'COCHABAMBA', 20, 27),
 (6992, 'DANIEL CENTIGA', '11542365', 1240, '10/12/2025', 'COCHABAMBA', 20, 40),
@@ -8525,7 +8525,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (7666, 'VALENTINA MNAMANI', '32654241', 1258, '17/12/2025', 'COCHABAMBA', 20, 44),
 (7667, 'LIZBETH ENRIQUEZ', '13265000', 1258, '17/12/2025', 'COCHABAMBA', 20, 8),
 (7668, 'JHONNBY GARCIA', '32655410', 1258, '17/12/2025', 'COCHABAMBA', 20, 30);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (7669, 'FAMILIA ROCHA', '0', 1258, '17/12/2025', 'COCHABAMBA', 20, 4),
 (7670, 'DONA FUENTES', '0', 1258, '17/12/2025', 'COCHABAMBA', 20, 9),
 (7671, 'JUDITH FLORES', '3202010', 1258, '17/12/2025', 'COCHABAMBA', 20, 10),
@@ -9216,7 +9216,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (8356, 'REINALDO ARRIAGA', '14526300', 1278, '02/01/2026', 'LA PAZ', 20, 2),
 (8357, 'VERONICA MANCHEGO', '15487744', 1278, '02/01/2026', 'LA PAZ', 20, 31),
 (8358, 'FERNANDO ZARATE', '12547465', 1278, '02/01/2026', 'LA PAZ', 20, 5);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (8359, 'MARCELO BONIFAS', '0', 1278, '02/01/2026', 'LA PAZ', 20, 8),
 (8360, 'ASHIRLEY FERNANDEZ', '13265744', 1278, '02/01/2026', 'LA PAZ', 20, 10),
 (8361, 'ODALITH DELGADILLO', '14526336', 1278, '02/01/2026', 'LA PAZ', 20, 15),
@@ -9900,7 +9900,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (9039, 'ayton miranda', '0', 1298, '15/01/2026', 'LA PAZ', 20, 5),
 (9040, 'familia panoso', '4515424', 1298, '15/01/2026', 'LA PAZ', 20, 12),
 (9041, 'andrea morales', '12020144', 1298, '15/01/2026', 'LA PAZ', 20, 7);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (9042, 'gerardo ayrton', '0', 1298, '15/01/2026', 'LA PAZ', 20, 13),
 (9043, 'pedro morales', '4986525', 1298, '15/01/2026', 'LA PAZ', 20, 14),
 (9044, 'andfrea miorales', '13265001', 1298, '15/01/2026', 'LA PAZ', 20, 6),
@@ -10583,7 +10583,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (9721, 'ALEJANDRO OPACHECO', '7541410', 1318, '22/01/2026', 'LA PAZ', 20, 2),
 (9722, 'FAMILIA IVA', '0', 1318, '22/01/2026', 'LA PAZ', 20, 39),
 (9723, 'FAMILIA RAMIOREZ', '0', 1318, '22/01/2026', 'LA PAZ', 20, 12);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (9724, 'LIZETH ANTEZA', '9635207', 1318, '22/01/2026', 'LA PAZ', 20, 3),
 (9725, 'LIDER RODRIGUEZ', '0', 1318, '22/01/2026', 'LA PAZ', 20, 29),
 (9726, 'ANDRES IVA', '3214100', 1318, '22/01/2026', 'LA PAZ', 20, 38),
@@ -11261,7 +11261,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (10398, 'FAMILIA VILLARROEL', '0', 1339, '27/01/2026', 'COCHABAMBA', 20, 34),
 (10399, 'FAMILIA VILLARROEÑ', '6598741', 1339, '27/01/2026', 'COCHABAMBA', 20, 35),
 (10400, 'CKLENETE MERCADIO', '13202044', 1339, '27/01/2026', 'COCHABAMBA', 20, 42);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (10401, 'ARIEL MOLINA', '3265874', 1339, '27/01/2026', 'COCHABAMBA', 20, 46),
 (10402, 'JUAN CARLOS MOLINA', '0', 1339, '27/01/2026', 'COCHABAMBA', 20, 47),
 (10403, 'RAFAEL INTURIAAS', '0', 1339, '27/01/2026', 'COCHABAMBA', 20, 36),
@@ -11930,7 +11930,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (11066, 'MARCELO CHURARTA', '0', 1361, '10/02/2026', 'COCHABAMBA', 20, 34),
 (11067, 'MARIOLI PORCEL', '5841883', 1361, '10/02/2026', 'COCHABAMBA', 20, 10),
 (11068, 'FAMILIA CESPEDES', '0', 1361, '10/02/2026', 'COCHABAMBA', 20, 35);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (11069, 'FAMILIA CESPEDES', '6524141', 1361, '10/02/2026', 'COCHABAMBA', 20, 36),
 (11070, 'RAUL BARRIENTOS', '14526399', 1361, '10/02/2026', 'COCHABAMBA', 20, 19),
 (11071, 'ANDRES ROCHA', '0', 1361, '10/02/2026', 'COCHABAMBA', 20, 6),
@@ -12611,7 +12611,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (11746, 'MONTERO', '0', 1382, '21/02/2026', 'COCHABAMBAj', 20, 21),
 (11747, 'MONTERO', '0', 1382, '21/02/2026', 'COCHABAMBAj', 20, 39),
 (11748, 'MONTERO', '0', 1382, '21/02/2026', 'COCHABAMBAj', 20, 40);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (11749, 'VIRGINIA AYALA', '3265241', 1382, '21/02/2026', 'COCHABAMBAj', 20, 19),
 (11750, 'SANDRA HUANCA', '0', 1382, '21/02/2026', 'COCHABAMBAj', 20, 32),
 (11751, 'SAMANTA HUANCA', '13265222', 1382, '21/02/2026', 'COCHABAMBAj', 20, 33),
@@ -13303,7 +13303,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (12437, 'angeca vargas', '0', 1405, '04/03/2026', 'COCHABAMBA', 20, 19),
 (12438, 'virginia seguiente', '0', 1405, '04/03/2026', 'COCHABAMBA', 20, 10),
 (12439, 'limber fuentes', '0', 1405, '04/03/2026', 'COCHABAMBA', 20, 25);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (12440, 'lidia aruqipa', '0', 1405, '04/03/2026', 'COCHABAMBA', 20, 7),
 (12441, 'familia copa', '0', 1405, '04/03/2026', 'COCHABAMBA', 20, 5),
 (12442, 'beiimar apaza', '0', 1405, '04/03/2026', 'COCHABAMBA', 20, 26),
@@ -13982,7 +13982,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (13115, 'BETTY MAMANI', '0', 1428, '20/03/2026', 'COCHABAMBA', 20, 22),
 (13116, 'FRANCO CHOQUE', '14521100', 1428, '20/03/2026', 'COCHABAMBA', 20, 20),
 (13117, 'FELICIDAD DELGADO', '13265414', 1428, '20/03/2026', 'COCHABAMBA', 20, 21);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (13118, 'GUSTAVO MENDIETA', '87798680', 1428, '20/03/2026', 'COCHABAMBA', 20, 19),
 (13119, 'GROVER CHOQUE', '0', 1428, '20/03/2026', 'COCHABAMBA', 20, 31),
 (13120, 'FAMILIA CALISAYA', '13265988', 1428, '20/03/2026', 'COCHABAMBA', 20, 5),
@@ -14665,7 +14665,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (13797, 'CLAUDIO TECOLLANO', '0', 1448, '08/04/2026', 'COCHABAMBA', 20, 13),
 (13798, 'MARITZA MIRANDA', '3265987', 1448, '08/04/2026', 'COCHABAMBA', 20, 41),
 (13799, 'FILIBERTO ROJAS', '0', 1448, '08/04/2026', 'COCHABAMBA', 20, 42);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (13800, 'PEDRO ESCOBAR', '13202011', 1448, '08/04/2026', 'COCHABAMBA', 20, 35),
 (13801, 'ANDREA CORTEZ', '14526388', 1448, '08/04/2026', 'COCHABAMBA', 20, 43),
 (13802, 'LUIS CLAROS', '9874561', 1448, '08/04/2026', 'COCHABAMBA', 20, 36),
@@ -15345,7 +15345,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (14476, 'LENNI QUINTEROS', '13265985', 1472, '24/04/2026', 'COCHABAMBA', 20, 42),
 (14477, 'GUIDO VENTURA', '7902724', 1472, '24/04/2026', 'COCHABAMBA', 20, 46),
 (14478, 'SEBASTIAN CUELLAR', '0', 1472, '24/04/2026', 'COCHABAMBA', 20, 27);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (14479, 'ARIEL JAVIERTH', '6325477', 1472, '24/04/2026', 'COCHABAMBA', 20, 43),
 (14480, 'ARMINDA VEIZAGA', '15623417', 1472, '24/04/2026', 'COCHABAMBA', 20, 22),
 (14481, 'CARLOS PADILLA', '13265020', 1472, '24/04/2026', 'COCHABAMBA', 20, 20),
@@ -16015,7 +16015,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (15145, 'MARCELO INTURIAS', '0', 1491, '04/05/2026', 'COCHABAMBA', 20, 13),
 (15146, 'JUAN DANIEL PANOSO', '11215446', 1491, '04/05/2026', 'COCHABAMBA', 20, 26),
 (15147, 'PEDRO NOVILLO', '0', 1491, '04/05/2026', 'COCHABAMBA', 20, 27);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (15148, 'LUIS FAJARDO', '3265200', 1491, '04/05/2026', 'COCHABAMBA', 20, 28),
 (15149, 'JUAN CARLOS CÑLAROS', '0', 1491, '04/05/2026', 'COCHABAMBA', 20, 11),
 (15150, 'leisy london', '3265985', 1492, '04/05/2026', 'LA PAZ', 20, 1),
@@ -16688,7 +16688,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (15817, 'CELIA RIVAS', '0', 1515, '28/06/2026', 'COCHABAMBA', 20, 25),
 (15818, 'FERNANDO CORDOVA', '0', 1515, '28/06/2026', 'COCHABAMBA', 20, 17),
 (15819, 'SANTOS MARQUEZ', '3265985', 1515, '28/06/2026', 'COCHABAMBA', 20, 26);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (15820, 'FELIPE MAYTA', '11112547', 1515, '28/06/2026', 'COCHABAMBA', 20, 19),
 (15821, 'DIEGO LUNA', '8520201', 1515, '28/06/2026', 'COCHABAMBA', 20, 18),
 (15822, 'GUERY DORADO', '4512658', 1515, '28/06/2026', 'COCHABAMBA', 20, 16),
@@ -17373,7 +17373,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (16501, 'FAMILIA GOMEZ', '0', 1533, '06/07/2026', 'COCHABAMBA', 20, 2),
 (16502, 'FAMILIA CARVAJAL', '13265742', 1533, '06/07/2026', 'COCHABAMBA', 20, 8),
 (16503, 'FAMILIA SANABRIA', '8520000', 1533, '06/07/2026', 'COCHABAMBA', 20, 4);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (16504, 'FAMILIA SANABRIA', '0', 1533, '06/07/2026', 'COCHABAMBA', 20, 5),
 (16505, 'ARMANDO CORDOVA', '9865741', 1533, '06/07/2026', 'COCHABAMBA', 20, 10),
 (16506, 'ISIDRO QUISPE', '0', 1533, '06/07/2026', 'COCHABAMBA', 20, 3),
@@ -18052,7 +18052,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (17179, 'GUALBERT CHOQUE', '3206598', 1551, '11/07/2026', 'COCHABAMBA', 20, 28),
 (17180, 'ELENA FLORES', '0', 1551, '11/07/2026', 'COCHABAMBA', 20, 12),
 (17181, 'MARTHA FLORES', '7548741', 1551, '11/07/2026', 'COCHABAMBA', 20, 26);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (17182, 'ELENA FLORES', '0', 1551, '11/07/2026', 'COCHABAMBA', 20, 25),
 (17183, 'VICENTE DANIEL', '9717987', 1552, '11/07/2026', 'LA PAZ', 20, 1),
 (17184, 'NANCY SENSO', '3265410', 1552, '11/07/2026', 'LA PAZ', 20, 3),
@@ -18723,7 +18723,7 @@ INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `prec
 (17849, 'JOSE GUZMAN', '7874511', 1571, '17/07/2026', 'COCHABAMBA', 30, 21),
 (17850, 'MARIO VARGAS', '7845784', 1571, '17/07/2026', 'COCHABAMBA', 30, 6),
 (17851, 'IVER VARGAS', '3254774', 1571, '17/07/2026', 'COCHABAMBA', 30, 7);
-INSERT INTO `persona` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
+INSERT INTO `pasajeros` (`codP`, `nombre`, `ci`, `codR`, `fecha`, `destino`, `precio`, `asiento`) VALUES
 (17852, 'PATRICIA DELGADO', '658475', 1571, '17/07/2026', 'COCHABAMBA', 30, 23),
 (17853, 'HERNAN RIVERA', '4512487', 1571, '17/07/2026', 'COCHABAMBA', 30, 19),
 (17854, 'NOE SERRANO', '7845712', 1571, '17/07/2026', 'COCHABAMBA', 30, 35),
@@ -20474,9 +20474,9 @@ ALTER TABLE `planilla`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `persona`
+-- Indices de la tabla `pasajeros`
 --
-ALTER TABLE `persona`
+ALTER TABLE `pasajeros`
   ADD PRIMARY KEY (`codP`),
   ADD KEY `codR` (`codR`);
 
@@ -20497,9 +20497,9 @@ ALTER TABLE `planilla`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3756;
 
 --
--- AUTO_INCREMENT de la tabla `persona`
+-- AUTO_INCREMENT de la tabla `pasajeros`
 --
-ALTER TABLE `persona`
+ALTER TABLE `pasajeros`
   MODIFY `codP` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18027;
 
 --
@@ -20513,10 +20513,10 @@ ALTER TABLE `reporte`
 --
 
 --
--- Filtros para la tabla `persona`
+-- Filtros para la tabla `pasajeros`
 --
-ALTER TABLE `persona`
-  ADD CONSTRAINT `persona_ibfk_1` FOREIGN KEY (`codR`) REFERENCES `reporte` (`codR`);
+ALTER TABLE `pasajeros`
+  ADD CONSTRAINT `pasajeros_ibfk_1` FOREIGN KEY (`codR`) REFERENCES `reporte` (`codR`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

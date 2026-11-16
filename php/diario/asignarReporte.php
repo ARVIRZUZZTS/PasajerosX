@@ -4,7 +4,7 @@ include "../conexion.php";
 $codP = $_POST['codP'];
 $codR = $_POST['codR'];
 
-$sql = "UPDATE persona SET codR = ? WHERE codP = ?";
+$sql = "UPDATE pasajeros SET codR = ? WHERE codP = ?";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param("ii", $codR, $codP);
 

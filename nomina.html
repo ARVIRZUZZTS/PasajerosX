@@ -103,6 +103,14 @@
                                 <datalist id="hr-list"></datalist>
                             </div>
                         </div>
+                        <div class="field-row">
+                            <div class="reserva-toggle-wrap">
+                                <label>RESERVAS (Montero)</label>
+                                <input type="checkbox" id="reservas" class="reserva-toggle">
+                                <button type="button" id="btnReservas" class="btn-reservas" disabled>Seleccionar asientos</button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="asientos_reservados">
                     </div>
                 </div>
             </div>
@@ -110,6 +118,25 @@
     </main>
     </div>
     </div>
+    <div id="modalReservas" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Seleccionar asientos reservados</h3>
+                <button type="button" class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="seatMapModal" class="seat-map-modal"></div>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-count">Seleccionados: <span id="modalCount">0</span></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="modalCancel">Cancelar</button>
+                    <button type="button" class="btn-confirm" id="modalConfirm">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         window.PAGE_TITLE = "CREAR VIAJE";
         window.PAGE_BUTTONS = [

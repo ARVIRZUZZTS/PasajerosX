@@ -1,0 +1,139 @@
+.imgPr2 {
+    width: 340PX;
+    max-width: 340px;
+    display: block;
+    margin: 0 auto;
+}
+
+.pasajeroPrintBody {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.pasajeroPrintBody {
+    width: 331px;
+}
+
+.pasajeroPrintBody div {
+    display: flex;
+}
+
+.pasajeroPrintBody div h3 {
+    padding: 5px;
+    margin: 0px;
+}
+
+.marNon {
+    margin: 0px 0px 3px 0px;
+}
+
+.strCent {
+    text-align: center !important;
+    width: 100% !important;
+}
+
+.big {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+
+#fact {
+    display: flex;
+    flex-direction: column;
+}
+
+.cien {
+    width: 100%;
+    text-align: left !important;
+}
+
+.dtP {
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.nmP {
+    border: 1px solid black;
+    border-top: 0px;
+}
+
+.ciPr {
+    text-align: left !important;
+    border: 1px solid black;
+    border-top: 0px;
+}
+
+.pl {
+    padding: 5px;
+    text-align: left !important;
+    width: 70% !important;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+}
+
+.ca {
+    text-align: left !important;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 30% !important;
+}
+
+.asP {
+    text-align: left !important;
+    border: 1px solid black;
+    border-top: 0px;
+    width: 50% !important;
+    word-break: break-word;
+}
+
+.prP {
+    text-align: left !important;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 50% !important;
+}
+
+#emP {
+    text-align: left !important;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    width: 100% !important;
+}
+
+.fechaPrint {
+    border: 1px solid black;
+    border-top: 0px;
+    width: 50%;
+    text-align: left !important;
+}
+
+.hrP {
+    width: 50%;
+    text-align: left !important;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.bv {
+    margin: 5px 0px 5px 0px;
+}
+
+.msj {
+    margin-top: 0px;
+    font-size: large;
+}
+
+.pasajeroPrintBody h1,
+.pasajeroPrintBody h3,
+.pasajeroPrintBody p {
+    text-align: center;
+    width: 100%;
+}
+
+@page {
+    margin: 0;
+}

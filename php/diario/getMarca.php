@@ -12,19 +12,19 @@ if ($codP <= 0) {
 
 try {
     // Primero obtener el codR asociado al pasajero
-    $query = "SELECT codR FROM persona WHERE codP = ?";
+    $query = "SELECT codR FROM pasajeros WHERE codP = ?";
     $stmt = $conexion->prepare($query);
     $stmt->bind_param("i", $codP);
     $stmt->execute();
     $result = $stmt->get_result();
-    $persona = $result->fetch_assoc();
+    $pasajero = $result->fetch_assoc();
     
-    if (!$persona || !isset($persona['codR'])) {
+    if (!$pasajero || !isset($pasajero['codR'])) {
         echo json_encode(['error' => 'Pasajero no encontrado o sin reporte asignado']);
         exit;
     }
     
-    $codR = $persona['codR'];
+    $codR = $pasajero['codR'];
     
     // Ahora obtener el carril del reporte
     $query = "SELECT carril, placa FROM reporte WHERE codR = ?";

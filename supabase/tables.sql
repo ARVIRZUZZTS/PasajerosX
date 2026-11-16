@@ -50,21 +50,115 @@ CREATE TABLE public.usuarios (
   creado timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
   sincronizado smallint,
   cambio_contra boolean DEFAULT false,
+  updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT usuarios_pkey PRIMARY KEY (id_usuario)
 );
 CREATE TABLE public.destinos (
   id integer NOT NULL DEFAULT nextval('destinos_id_seq'::regclass),
-  nombre_destino character varying,
+  nombre_destino character varying UNIQUE,
   tiene_tramos boolean DEFAULT false,
   sucursal integer DEFAULT 1,
   abrev character varying NOT NULL DEFAULT ''::character varying,
   informacion character varying NOT NULL DEFAULT ''::character varying,
   telefono character varying NOT NULL DEFAULT ''::character varying,
   sincronizado integer NOT NULL DEFAULT 1,
+  updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT destinos_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.sucursal (
   id_sucursal integer NOT NULL DEFAULT nextval('sucursal_id_sucursal_seq'::regclass),
   nombre character varying NOT NULL UNIQUE,
+  reservas boolean DEFAULT false,
+  zona_reserva character varying,
+  asientos_reservados integer[],
+  updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT sucursal_pkey PRIMARY KEY (id_sucursal)
+);
+CREATE TABLE public.planillas (
+  nombre character varying NOT NULL,
+  elementos jsonb NOT NULL,
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  deleted boolean NOT NULL DEFAULT false,
+  CONSTRAINT planillas_pkey PRIMARY KEY (nombre)
+);
+CREATE TABLE public.flota (
+  placa character varying NOT NULL,
+  propietario character varying,
+  chofer1 integer,
+  chofer2 integer,
+  id_destino character varying,
+  nombre_planilla character varying,
+  tipo character varying NOT NULL DEFAULT 'Ok'::character varying,
+  sucursal integer,
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  estado character varying,
+  CONSTRAINT flota_pkey PRIMARY KEY (placa)
+);
+
+-- Reservas por reporte + boleteria (ver migracion_reservas_boleteria.sql)
+CREATE TABLE public.reportes (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  sucursal integer NOT NULL,
+  local_codr integer,
+  fecha date,
+  destino character varying,
+  placa character varying,
+  hora character varying,
+  carril character varying DEFAULT '5',
+  con1 character varying,
+  lic1 character varying,
+  con2 character varying,
+  lic2 character varying,
+  ayudante character varying,
+  marca character varying,
+  reservas boolean DEFAULT false,
+  zona_reserva character varying,
+  asientos_reservados integer[],
+  sincronizado smallint DEFAULT 0,
+  deleted boolean DEFAULT false,
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT reportes_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.reporte_pasajeros (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  sucursal integer NOT NULL,
+  reporte_id uuid,
+  local_codp integer,
+  nombre character varying,
+  ci character varying,
+  fecha date,
+  destino character varying,
+  precio numeric,
+  asiento integer,
+  boletero_id integer,
+  sincronizado smallint DEFAULT 0,
+  deleted boolean DEFAULT false,
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT reporte_pasajeros_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.asignacion_boletero (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  sucursal integer NOT NULL,
+  reporte_id uuid NOT NULL,
+  boletero_id integer NOT NULL,
+  asignado_por integer,
+  estado character varying DEFAULT 'activo',
+  notas text,
+  sincronizado smallint DEFAULT 0,
+  deleted boolean DEFAULT false,
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT asignacion_boletero_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.asientos_bloqueados (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  sucursal integer NOT NULL,
+  reporte_id uuid NOT NULL,
+  asiento integer NOT NULL,
+  motivo character varying,
+  zona character varying,
+  reservado_para character varying,
+  sincronizado smallint DEFAULT 0,
+  deleted boolean DEFAULT false,
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT asientos_bloqueados_pkey PRIMARY KEY (id)
 );
